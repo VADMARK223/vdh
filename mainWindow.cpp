@@ -10,21 +10,21 @@
 using namespace std;
 
 MainWindow::MainWindow() {
-    pFinishBtn->setEnabled(false);
-
-    auto *pCloseBtn = new QPushButton("E&xit");
+    connect(pStartBtn, SIGNAL(clicked(bool)), this, SLOT(startBtnClickedHandler()));
 
     auto *pHLayout = new QHBoxLayout;
     pHLayout->addWidget(pStartBtn);
+    setLayout(pHLayout);
+
+    pFinishBtn->setEnabled(false);
+    connect(pFinishBtn, SIGNAL(clicked(bool)), this, SLOT(finishBtnClickedHandler()));
     pHLayout->addWidget(pFinishBtn);
+
+    auto *pCloseBtn = new QPushButton("E&xit");
+    connect(pCloseBtn, SIGNAL(clicked(bool)), this, SLOT(close()));
     pHLayout->addWidget(pCloseBtn);
 
-    connect(pStartBtn, SIGNAL(clicked(bool)), this, SLOT(startBtnClickedHandler()));
-    connect(pFinishBtn, SIGNAL(clicked(bool)), this, SLOT(finishBtnClickedHandler()));
-    connect(pCloseBtn, SIGNAL(clicked(bool)), this, SLOT(close()));
     connect(timer, &QTimer::timeout, this, &MainWindow::timerHandler);
-
-    setLayout(pHLayout);
 }
 
 void MainWindow::startBtnClickedHandler() {
