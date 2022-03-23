@@ -17,10 +17,11 @@ private:
     QPushButton *pFinishBtn = new QPushButton("&Finish");
     QTimer *timer = new QTimer(this);
 
-    static void timerHandler();
+    void timerHandler();
 
 public:
     static const int TIMEOUT = 4000;
+
     MainWindow();
 
 public slots:

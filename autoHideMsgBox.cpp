@@ -7,6 +7,14 @@
 
 using namespace std;
 
+AutoHideMsgBox::AutoHideMsgBox(int timeout, MainWindow *parent) : QMessageBox(parent) {
+    setIcon(QMessageBox::Information);
+    setText("I am online!");
+    setTimeout(timeout);
+    setAttribute(Qt::WA_DeleteOnClose);
+    setModal(false);
+}
+
 void AutoHideMsgBox::setTimeout(int value) {
     timeout = value;
 }
@@ -21,7 +29,6 @@ void AutoHideMsgBox::showEvent(QShowEvent *event) {
 }
 
 void AutoHideMsgBox::timerEvent(QTimerEvent *event) {
-//    QObject::timerEvent(event);
     cout << "AutoHideMsgBox timer event." << endl;
     currentTime++;
     if (currentTime >= timeout / 1000) {

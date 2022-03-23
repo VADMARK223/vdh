@@ -45,10 +45,8 @@ void MainWindow::finishBtnClickedHandler() {
 void MainWindow::timerHandler() {
     cout << "Timer handler." << endl;
 
-    AutoHideMsgBox autoHideMsgBox;
-    autoHideMsgBox.setText("I am online!");
-    autoHideMsgBox.setTimeout(TIMEOUT / 2);
-    autoHideMsgBox.exec();
+    auto *autoHideMsgBox = new AutoHideMsgBox(TIMEOUT / 2, this);
+    autoHideMsgBox->show();
 }
 
 
