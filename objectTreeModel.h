@@ -7,6 +7,7 @@
 
 #include <QAbstractItemModel>
 #include <QObject>
+#include <QStandardItemModel>
 
 class ObjectTreeModel : public QAbstractItemModel {
 Q_OBJECT
@@ -25,6 +26,8 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
 
     [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;
+
+    bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role) override;
 
 protected:
     QObject *_rootItem;

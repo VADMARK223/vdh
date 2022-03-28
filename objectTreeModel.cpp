@@ -69,3 +69,8 @@ void ObjectTreeModel::addItem(QObject *item, const QModelIndex &parentIndex) {
     endInsertRows();
 }
 
+bool ObjectTreeModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role) {
+    qDebug("aaa");
+    //return QAbstractItemModel::setHeaderData(section, orientation, value, role);
+}
+
