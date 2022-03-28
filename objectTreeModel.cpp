@@ -17,7 +17,7 @@ void ObjectTreeModel::setColumns(QStringList cols) {
 
 QModelIndex ObjectTreeModel::index(int row, int column, const QModelIndex &parent) const {
     if (!hasIndex(row, column, parent)) {
-        return QModelIndex();
+        return {};
     }
     QObject *parentObject = objByIndex(parent);
     return createIndex(row, column, parentObject->children().at(row));
@@ -27,26 +27,25 @@ QModelIndex ObjectTreeModel::parent(const QModelIndex &child) const {
     QObject *childObj = objByIndex(child);
     QObject *parentObj = childObj->parent();
     if (parentObj == _rootItem) {
-        return QModelIndex();
+        return {};
     }
 
     QObject *grandParentObj = parentObj->parent();
-    int row = grandParentObj->children().indexOf(parentObj);
+    int row = static_cast<int>(grandParentObj->children().indexOf(parentObj));
     return createIndex(row, 0, parentObj);
 }
 
 int ObjectTreeModel::rowCount(const QModelIndex &parent) const {
-    return objByIndex(parent)->children().count();
+    return static_cast<int>(objByIndex(parent)->children().count());
 }
 
 int ObjectTreeModel::columnCount(const QModelIndex &parent) const {
-//    Q_UNUSED(parent);
-    return _columns.count();
+    return static_cast<int>(_columns.count());
 }
 
 QVariant ObjectTreeModel::data(const QModelIndex &index, int role) const {
     if (!index.isValid()) {
-        return QVariant();
+        return {};
     }
 
     if (role == Qt::DisplayRole) {
@@ -54,8 +53,7 @@ QVariant ObjectTreeModel::data(const QModelIndex &index, int role) const {
         return objByIndex(index)->property(name);
     }
 
-    return QVariant();
-
+    return {};
 }
 
 QObject *ObjectTreeModel::objByIndex(const QModelIndex &index) const

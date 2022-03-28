@@ -10,11 +10,12 @@ int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 //    MainWindow mainWindow;
 //    mainWindow.show();
+//    auto *splitter = new QSplitter;
 
     auto *model = new ObjectTreeModel();
-    QStringList cols;
-    cols << F_NAME << F_AGE;
-    model->setColumns(cols);
+    QStringList columns;
+    columns << F_NAME << F_AGE;
+    model->setColumns(columns);
 
     auto *item1 = new QObject();
     item1->setObjectName("Father");
