@@ -6,28 +6,33 @@
 #define VDH_TASKTREEMODEL_H
 
 #include <QStandardItemModel>
+#include "../taskTreeItem/TaskTreeItem.h"
 
 class TaskTreeModel : public QAbstractItemModel {
 public:
-    explicit TaskTreeModel(QObject *parent = nullptr);
+    explicit TaskTreeModel(const QString &data, QObject *parent = nullptr);
 
-    void setColumns(QStringList cols);
-    void addItem(QObject *item, const QModelIndex &parentIndex);
+    ~TaskTreeModel();
 
-    [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex &parent) const override;
+    QVariant data(const QModelIndex &index, int role) const override;
 
-    [[nodiscard]] QModelIndex parent(const QModelIndex &child) const override;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-    [[nodiscard]] int rowCount(const QModelIndex &parent) const override;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-    [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
+    QModelIndex index(int row, int column,
+                      const QModelIndex &parent = QModelIndex()) const override;
 
-    [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;
+    QModelIndex parent(const QModelIndex &index) const override;
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
+
+    int columnCount(const QModelIndex &parent = QModelIndex()) const override;
 
 protected:
-    QObject *_rootItem;
-    QStringList _columns;
-    [[nodiscard]] QObject *objByIndex(const QModelIndex &index) const;
+    void setupModelData(const QStringList &lines, TaskTreeItem *parent);
+
+    TaskTreeItem *rootItem;
 };
 
 #endif //VDH_TASKTREEMODEL_H

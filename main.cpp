@@ -4,6 +4,7 @@
 #include <QHeaderView>
 #include <QAbstractItemModel>
 #include <QSplitter>
+#include <QFile>
 #include "mainWindow.h"
 #include "src/taskTreeModel/TaskTreeModel.h"
 
@@ -17,40 +18,16 @@ int main(int argc, char *argv[]) {
 //    MainWindow mainWindow;
 //    mainWindow.show();
 
+//    Q_INIT_RESOURCE(vdh);
 
+    QFile file("data.txt");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Error open file!";
+        return 0;
+    }
 
-    auto * model = new TaskTreeModel;
-//    model->setColumnCount(3);
-//    auto *model = new ObjectTreeModel();
-
-//    model->setHeaderData(0, Qt::Horizontal, "Name", Qt::EditRole);
-//    model->setHeaderData(1, Qt::Horizontal, "Spend", Qt::EditRole);
-//    model->setHeaderData(2, Qt::Horizontal, "Description", Qt::EditRole);
-
-    QStringList columns;
-    columns << F_NAME << F_SPENT << F_DESC;
-    model->setColumns(columns);
-
-    auto *item1 = new QObject();
-    item1->setObjectName("March");
-    item1->setProperty(F_AGE, 45);
-
-    auto *item2 = new QObject(item1);
-    item2->setProperty(F_NAME, "Week 4");
-    item2->setProperty(F_AGE, 14);
-
-    auto *item3 = new QObject(item2);
-    item3->setProperty(F_NAME, "27");
-    item3->setProperty(F_AGE, 14);
-
-    auto *item4 = new QObject(item3);
-    item4->setProperty(F_NAME, "Task #1");
-    item4->setProperty(F_AGE, 14);
-    item4->setProperty(F_SPENT, "15m");
-
-    model->addItem(item1, QModelIndex());
-
-
+    auto *model = new TaskTreeModel(file.readAll());
+    file.close();
 
     auto *treeView = new QTreeView();
     treeView->setHeaderHidden(false);
@@ -80,6 +57,7 @@ int main(int argc, char *argv[]) {
     auto *splitter = new QSplitter;
     splitter->addWidget(treeView);
     splitter->addWidget(treeWidget);
+    splitter->setSizes(QList<int>({200, 100}));
     splitter->show();
 
     return QApplication::exec();

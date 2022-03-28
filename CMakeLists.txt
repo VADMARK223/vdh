@@ -14,7 +14,7 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(vdh main.cpp mainWindow.h mainWindow.cpp autoHideMsgBox.cpp autoHideMsgBox.h src/taskTreeModel/TaskTreeModel.cpp src/taskTreeModel/TaskTreeModel.h)
+add_executable(vdh main.cpp mainWindow.h mainWindow.cpp autoHideMsgBox.cpp autoHideMsgBox.h src/taskTreeModel/TaskTreeModel.cpp src/taskTreeModel/TaskTreeModel.h src/taskTreeItem/TaskTreeItem.cpp src/taskTreeItem/TaskTreeItem.h)
 target_link_libraries(vdh
         Qt::Core
         Qt::Gui
