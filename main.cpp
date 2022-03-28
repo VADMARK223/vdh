@@ -4,22 +4,31 @@
 #include <QHeaderView>
 #include <QAbstractItemModel>
 #include <QSplitter>
-#include <QStandardItemModel>
 #include "mainWindow.h"
-#include "objectTreeModel.h"
+#include "src/taskTreeModel/TaskTreeModel.h"
 
 #define F_NAME "objectName"
 #define F_AGE "age"
 #define F_SPENT "spent"
+#define F_DESC "desc"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 //    MainWindow mainWindow;
 //    mainWindow.show();
 
-    auto *model = new ObjectTreeModel();
+
+
+    auto * model = new TaskTreeModel;
+//    model->setColumnCount(3);
+//    auto *model = new ObjectTreeModel();
+
+//    model->setHeaderData(0, Qt::Horizontal, "Name", Qt::EditRole);
+//    model->setHeaderData(1, Qt::Horizontal, "Spend", Qt::EditRole);
+//    model->setHeaderData(2, Qt::Horizontal, "Description", Qt::EditRole);
+
     QStringList columns;
-    columns << F_NAME << F_AGE << F_SPENT;
+    columns << F_NAME << F_SPENT << F_DESC;
     model->setColumns(columns);
 
     auto *item1 = new QObject();
@@ -45,10 +54,6 @@ int main(int argc, char *argv[]) {
 
     auto *treeView = new QTreeView();
     treeView->setHeaderHidden(false);
-//    QStandardItemModel * temp = new QStandardItemModel;
-//    temp->setColumnCount(2);
-    model->setHeaderData(0, Qt::Horizontal, "Col", Qt::EditRole);
-//    treeView->setModel(temp);
     treeView->setModel(model);
 
     auto *child1 = new QTreeWidgetItem;
