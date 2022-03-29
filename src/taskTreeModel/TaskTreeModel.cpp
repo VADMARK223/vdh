@@ -107,7 +107,6 @@ void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
     QVector<TaskTreeItem *> parents;
     parents << parent;
 
-
     QString filePath(":files/data.xml");
     auto *file = new QFile(filePath);
     if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -122,46 +121,39 @@ void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
         QXmlStreamReader::TokenType token = xmlReader.readNext();
 
         if (token == QXmlStreamReader::StartDocument) {
-            qDebug() << "StartDocument";
             continue;
         }
 
-        if (token == QXmlStreamReader::EndDocument) {
-            qDebug() << "EndDocument";
-        }
-
         if (token == QXmlStreamReader::StartElement) {
-            qDebug() << "StartElement";
-        }
-
-        if (token == QXmlStreamReader::EndElement) {
-            qDebug() << "EndElement";
-        }
-
-        if (token == QXmlStreamReader::Characters) {
-            qDebug() << "Characters";
-        }
-
-
-        if (token == QXmlStreamReader::StartElement) {
-            if (xmlReader.name() == tr("TODOLIST")) {
-                continue;
-            }
-
             if (xmlReader.name() == tr("TASK")) {
                 const QString &title = xmlReader.attributes().value("TITLE").toString();
                 const QString &id = xmlReader.attributes().value("ID").toString();
-                qDebug() << title;
                 QVector<QVariant> task;
                 task << QList<QVariant>({QVariant(title), QVariant(id)});
-                rootItem->appendChild(new TaskTreeItem(task, rootItem));
 
-//                while (xmlReader.readNextStartElement()){
-//                    QVector<QVariant> subTask2;
-//                    subTask2 << QList<QVariant>({QVariant("SubTask 1"), QVariant("2")});
-//                    TaskTreeItem *pItem = parents.last()->child(0);
-//                    pItem->appendChild(new TaskTreeItem(subTask2, pItem));
-//                }
+                qDebug() << title << " Size: " << parents.size() << " Count: " << parents.count();
+
+                auto *pItem = new TaskTreeItem(task, parents.last());
+                parents.last()->appendChild(pItem);
+                parents << pItem;
+                parents.pop_back();
+
+                /*if (isSubTask) {
+                    TaskTreeItem *pItem = parents.last()->child(0);
+                    qDebug() << "1";
+                    pItem->appendChild(new TaskTreeItem(task, pItem));
+                    parents << pItem;
+                } else {
+                    TaskTreeItem *pItem = parents.last()->child(0);
+                    if (pItem == nullptr) {
+                        qDebug() << "Add root";
+                        parents.last()->appendChild(new TaskTreeItem(task, parents.last()));
+                    } else {
+                        qDebug() << "2";
+                        pItem->appendChild(new TaskTreeItem(task, pItem));
+                        parents.pop_back();
+                    }
+                }*/
             }
         }
     }
