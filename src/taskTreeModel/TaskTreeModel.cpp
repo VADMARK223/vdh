@@ -23,13 +23,15 @@ int TaskTreeModel::columnCount(const QModelIndex &parent) const {
 }
 
 QVariant TaskTreeModel::data(const QModelIndex &index, int role) const {
-    if (!index.isValid())
-        return QVariant();
+    if (!index.isValid()) {
+        return {};
+    }
 
-    if (role != Qt::DisplayRole)
-        return QVariant();
+    if (role != Qt::DisplayRole) {
+        return {};
+    }
 
-    TaskTreeItem *item = static_cast<TaskTreeItem *>(index.internalPointer());
+    auto *item = static_cast<TaskTreeItem *>(index.internalPointer());
 
     return item->data(index.column());
 }
@@ -41,40 +43,44 @@ Qt::ItemFlags TaskTreeModel::flags(const QModelIndex &index) const {
     return QAbstractItemModel::flags(index);
 }
 
-QVariant TaskTreeModel::headerData(int section, Qt::Orientation orientation,
-                                   int role) const {
+QVariant TaskTreeModel::headerData(int section, Qt::Orientation orientation, int role) const {
     if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
         return rootItem->data(section);
 
-    return QVariant();
+    return {};
 }
 
 QModelIndex TaskTreeModel::index(int row, int column, const QModelIndex &parent) const {
-    if (!hasIndex(row, column, parent))
-        return QModelIndex();
+    if (!hasIndex(row, column, parent)) {
+        return {};
+    }
 
     TaskTreeItem *parentItem;
 
-    if (!parent.isValid())
+    if (!parent.isValid()) {
         parentItem = rootItem;
-    else
+    } else {
         parentItem = static_cast<TaskTreeItem *>(parent.internalPointer());
+    }
 
     TaskTreeItem *childItem = parentItem->child(row);
     if (childItem)
         return createIndex(row, column, childItem);
-    return QModelIndex();
+    return {};
 }
 
 QModelIndex TaskTreeModel::parent(const QModelIndex &index) const {
-    if (!index.isValid())
-        return QModelIndex();
+    if (!index.isValid()) {
+        return {};
+    }
 
-    TaskTreeItem *childItem = static_cast<TaskTreeItem *>(index.internalPointer());
+
+    auto *childItem = static_cast<TaskTreeItem *>(index.internalPointer());
     TaskTreeItem *parentItem = childItem->parentItem();
 
-    if (parentItem == rootItem)
-        return QModelIndex();
+    if (parentItem == rootItem) {
+        return {};
+    }
 
     return createIndex(parentItem->row(), 0, parentItem);
 }
@@ -108,16 +114,11 @@ void TaskTreeModel::setupModelData(const QStringList &lines, TaskTreeItem *paren
             position++;
         }
 
-        qDebug() << "position: " << position;
-
         const QString lineData = lines[number].mid(position).trimmed();
 
         if (!lineData.isEmpty()) {
-            // Read the column data from the rest of the line.
             const QStringList columnStrings =
                     lineData.split(QLatin1Char('\t'), Qt::SkipEmptyParts);
-
-            qDebug() << "columnStrings: " << columnStrings;
 
             QVector<QVariant> columnData;
             columnData.reserve(columnStrings.count());
@@ -125,12 +126,8 @@ void TaskTreeModel::setupModelData(const QStringList &lines, TaskTreeItem *paren
 
             for (const QString &columnString: columnStrings)
                 columnData << columnString;
-            qDebug() << "columnData: " << columnData;
 
             if (position > indentations.last()) {
-                // The last child of the current parent is now the new parent
-                // unless the current parent has no children.
-
                 if (parents.last()->childCount() > 0) {
                     parents << parents.last()->child(parents.last()->childCount() - 1);
                     indentations << position;
@@ -142,7 +139,6 @@ void TaskTreeModel::setupModelData(const QStringList &lines, TaskTreeItem *paren
                 }
             }
 
-            // Append a new item to the current parent's list of children.
             parents.last()->appendChild(new TaskTreeItem(columnData, parents.last()));
         }
         ++number;

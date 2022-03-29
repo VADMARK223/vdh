@@ -17,15 +17,15 @@ public:
 
     TaskTreeItem *child(int row);
 
-    int childCount() const;
+    [[nodiscard]] int childCount() const;
 
-    int columnCount() const;
+    [[nodiscard]] int columnCount() const;
 
-    QVariant data(int column) const;
+    [[nodiscard]] QVariant data(int column) const;
 
     TaskTreeItem *parentItem();
 
-    int row() const;
+    [[nodiscard]] int row() const;
 
 private:
     QVector<TaskTreeItem *> _childItems;

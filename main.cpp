@@ -8,11 +8,6 @@
 #include "mainWindow.h"
 #include "src/taskTreeModel/TaskTreeModel.h"
 
-#define F_NAME "objectName"
-#define F_AGE "age"
-#define F_SPENT "spent"
-#define F_DESC "desc"
-
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 //    MainWindow mainWindow;

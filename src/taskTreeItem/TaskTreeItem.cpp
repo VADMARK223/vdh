@@ -48,5 +48,6 @@ int TaskTreeItem::row() const {
     if (_parentItem) {
         return static_cast<int>(_parentItem->_childItems.indexOf(const_cast<TaskTreeItem *>(this)));
     }
+    return 0;
 }
 
