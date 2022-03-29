@@ -9,14 +9,17 @@
 #include <QLabel>
 #include <QSplitter>
 #include <QShortcut>
+#include <QMessageBox>
+#include <QXmlStreamReader>
 
 MainWindow::MainWindow(QWidget *parent) {
     auto *menuBar = new QMenuBar;
-    auto *menu = new QMenu("&File");
-    menu->addAction("E&xit", this, SLOT(close()), tr("Alt+F4"));
-    menu->addSeparator();
 
-    menuBar->addMenu(menu);
+    auto *fileMenu = new QMenu("&File");
+    fileMenu->addAction("&Open Tasklist...", this, SLOT(onOpenFileClicked()), tr("Ctrl+O"));
+    fileMenu->addSeparator();
+    fileMenu->addAction("E&xit", this, SLOT(close()), tr("Alt+F4"));
+    menuBar->addMenu(fileMenu);
     setMenuBar(menuBar);
 
     auto *model = createModel();
@@ -39,12 +42,54 @@ MainWindow::MainWindow(QWidget *parent) {
 }
 
 TaskTreeModel *MainWindow::createModel() {
-    QFile file(":files/data.txt");
+    QString filePath(":files/data.txt");
+    QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Error open file!";
+        QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
+        file.close();
+        return {};
     }
 
     auto *model = new TaskTreeModel(file.readAll());
     file.close();
     return model;
+}
+
+void MainWindow::onOpenFileClicked() {
+    QString filePath(":files/data.xml");
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
+        file.close();
+    }
+
+    QXmlStreamReader xmlReader;
+    xmlReader.setDevice(&file);
+
+    while (!xmlReader.atEnd()) {
+        qDebug() << "xmlReader.readElementText()";
+        // Read next element
+        QXmlStreamReader::TokenType token = xmlReader.readNext();
+        //If token is just StartDocument - go to next
+        if (token == QXmlStreamReader::StartDocument) {
+            continue;
+        }
+        //If token is StartElement - read it
+        if (token == QXmlStreamReader::StartElement) {
+            if (xmlReader.name() == tr("tasks")) {
+                continue;
+            }
+
+            if (xmlReader.name() == tr("task")) {
+                qDebug() << xmlReader.readElementText();
+            }
+        }
+    }
+
+    if (xmlReader.hasError()) {
+        QMessageBox::critical(this, "Error read file", xmlReader.errorString(), QMessageBox::Ok);
+    }
+
+    xmlReader.clear();
+    file.close();
 }

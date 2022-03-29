@@ -9,10 +9,15 @@
 #include "../taskTreeModel/TaskTreeModel.h"
 
 class MainWindow : public QMainWindow {
+Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
-    static TaskTreeModel * createModel();
+    TaskTreeModel *createModel();
+
+public slots:
+
+    void onOpenFileClicked();
 };
 
 #endif //VDH_MAINWINDOW_H
