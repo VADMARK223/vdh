@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<tasks>
-    <task>1</task>
-</tasks>
+<TODOLIST>
+    <TASK TITLE="Task 1">1</TASK>
+    <TASK TITLE="Task 2">2</TASK>
+</TODOLIST>

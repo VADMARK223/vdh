@@ -6,11 +6,12 @@
 #define VDH_TASKTREEMODEL_H
 
 #include <QStandardItemModel>
+#include <QFile>
 #include "../taskTreeItem/TaskTreeItem.h"
 
 class TaskTreeModel : public QAbstractItemModel {
 public:
-    explicit TaskTreeModel(const QString &data, QObject *parent = nullptr);
+    explicit TaskTreeModel(QFile &file, QObject *parent = nullptr);
 
     ~TaskTreeModel() override;
 
@@ -29,7 +30,7 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
 
 protected:
-    void setupModelData(const QStringList &lines, TaskTreeItem *parent);
+    void setupModelData(QList<QByteArray> lines, TaskTreeItem *parent);
 
     TaskTreeItem *rootItem;
 };

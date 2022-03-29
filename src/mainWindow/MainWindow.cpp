@@ -42,7 +42,8 @@ MainWindow::MainWindow(QWidget *parent) {
 }
 
 TaskTreeModel *MainWindow::createModel() {
-    QString filePath(":files/data.txt");
+//    QString filePath(":files/data.txt");
+    QString filePath(":files/data.xml");
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
@@ -50,7 +51,7 @@ TaskTreeModel *MainWindow::createModel() {
         return {};
     }
 
-    auto *model = new TaskTreeModel(file.readAll());
+    auto *model = new TaskTreeModel(file);
     file.close();
     return model;
 }
@@ -76,11 +77,11 @@ void MainWindow::onOpenFileClicked() {
         }
         //If token is StartElement - read it
         if (token == QXmlStreamReader::StartElement) {
-            if (xmlReader.name() == tr("tasks")) {
+            if (xmlReader.name() == tr("TODOLIST")) {
                 continue;
             }
 
-            if (xmlReader.name() == tr("task")) {
+            if (xmlReader.name() == tr("TASK")) {
                 qDebug() << xmlReader.readElementText();
             }
         }

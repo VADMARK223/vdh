@@ -6,8 +6,10 @@
 
 #include <QStringList>
 
-TaskTreeModel::TaskTreeModel(const QString &data, QObject *parent)
+TaskTreeModel::TaskTreeModel(QFile &file, QObject *parent)
         : QAbstractItemModel(parent) {
+    QByteArray data = file.readAll();
+    qDebug() << "Data: " << data;
     rootItem = new TaskTreeItem({tr("Title"), tr("Summary")});
     setupModelData(data.split('\n'), rootItem);
 }
@@ -98,10 +100,11 @@ int TaskTreeModel::rowCount(const QModelIndex &parent) const {
     return parentItem->childCount();
 }
 
-void TaskTreeModel::setupModelData(const QStringList &lines, TaskTreeItem *parent) {
+void TaskTreeModel::setupModelData(QList<QByteArray> lines, TaskTreeItem *parent) {
     QVector<TaskTreeItem *> parents;
-    QVector<int> indentations;
     parents << parent;
+    /*
+    QVector<int> indentations;
     indentations << 0;
 
     int number = 0;
@@ -142,13 +145,18 @@ void TaskTreeModel::setupModelData(const QStringList &lines, TaskTreeItem *paren
             parents.last()->appendChild(new TaskTreeItem(columnData, parents.last()));
         }
         ++number;
-    }
+    }*/
 
-    QVector<QVariant> columnData;
-    columnData << QList<QVariant>({QVariant("a"), QVariant("b")});
-    parents.last()->appendChild(new TaskTreeItem(columnData, parents.last()));
+    QVector<QVariant> task1;
+    task1 << QList<QVariant>({QVariant("Task 1"), QVariant("1")});
+    parents.last()->appendChild(new TaskTreeItem(task1, parents.last()));
 
-    QVector<QVariant> columnData1;
-    columnData1 << QList<QVariant>({QVariant("c"), QVariant("d")});
-    rootItem->appendChild(new TaskTreeItem(columnData1, rootItem));
+    QVector<QVariant> subTask2;
+    subTask2 << QList<QVariant>({QVariant("SubTask 1"), QVariant("2")});
+    TaskTreeItem *pItem = parents.last()->child(0);
+    pItem->appendChild(new TaskTreeItem(subTask2, pItem));
+
+    QVector<QVariant> task2;
+    task2 << QList<QVariant>({QVariant("Task 2"), QVariant("3")});
+    rootItem->appendChild(new TaskTreeItem(task2, rootItem));
 }
