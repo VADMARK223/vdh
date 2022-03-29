@@ -1,10 +1,10 @@
 #include <QApplication>
 #include <QTreeView>
-#include <QTreeWidgetItem>
 #include <QHeaderView>
-#include <QAbstractItemModel>
 #include <QSplitter>
 #include <QFile>
+#include <QLabel>
+#include <QLayout>
 #include "mainWindow.h"
 #include "src/taskTreeModel/TaskTreeModel.h"
 
@@ -13,9 +13,7 @@ int main(int argc, char *argv[]) {
 //    MainWindow mainWindow;
 //    mainWindow.show();
 
-//    Q_INIT_RESOURCE(vdh);
-
-    QFile file("data.txt");
+    QFile file(":files/data.txt");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "Error open file!";
         return 0;
@@ -28,30 +26,13 @@ int main(int argc, char *argv[]) {
     treeView->setHeaderHidden(false);
     treeView->setModel(model);
 
-    auto *child1 = new QTreeWidgetItem;
-    child1->setText(0, "Child1");
-    child1->setText(1, "Description1");
-
-    auto *child2 = new QTreeWidgetItem;
-    child2->setText(0, "Child2");
-    child2->setText(1, "Description2");
-
-    auto *topLevelItem = new QTreeWidgetItem;
-    topLevelItem->setText(0, "Name");
-    topLevelItem->setText(1, "Description");
-    topLevelItem->addChild(child1);
-    topLevelItem->addChild(child2);
-
-    auto *treeWidget = new QTreeWidget();
-    QStringList treeWidgetHeaderLabels;
-    treeWidgetHeaderLabels << "Column #1" << "Column #2";
-    treeWidget->setHeaderLabels(treeWidgetHeaderLabels);
-    treeWidget->addTopLevelItem(topLevelItem);
-    treeWidget->setColumnCount(2);
+    QPixmap pixmap(":images/logo.png");
+    auto *label = new QLabel;
+    label->setPixmap(pixmap);
 
     auto *splitter = new QSplitter;
     splitter->addWidget(treeView);
-    splitter->addWidget(treeWidget);
+    splitter->addWidget(label);
     splitter->setSizes(QList<int>({200, 100}));
     splitter->show();
 
