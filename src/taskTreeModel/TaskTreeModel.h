@@ -11,7 +11,7 @@
 
 class TaskTreeModel : public QAbstractItemModel {
 public:
-    explicit TaskTreeModel(QFile &file, QObject *parent = nullptr);
+    explicit TaskTreeModel(QFile *file, QObject *parent = nullptr);
 
     ~TaskTreeModel() override;
 
@@ -30,7 +30,7 @@ public:
     [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
 
 protected:
-    void setupModelData(QList<QByteArray> lines, TaskTreeItem *parent);
+    void setupModelData(QFile *file, TaskTreeItem *parent);
 
     TaskTreeItem *rootItem;
 };

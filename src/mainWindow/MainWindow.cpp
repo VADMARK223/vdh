@@ -44,38 +44,34 @@ MainWindow::MainWindow(QWidget *parent) {
 TaskTreeModel *MainWindow::createModel() {
 //    QString filePath(":files/data.txt");
     QString filePath(":files/data.xml");
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    auto *file = new QFile(filePath);
+    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
-        file.close();
+        file->close();
         return {};
     }
 
     auto *model = new TaskTreeModel(file);
-    file.close();
+    file->close();
     return model;
 }
 
 void MainWindow::onOpenFileClicked() {
     QString filePath(":files/data.xml");
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    auto *file = new QFile(filePath);
+    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
-        file.close();
+        file->close();
     }
 
     QXmlStreamReader xmlReader;
-    xmlReader.setDevice(&file);
+    xmlReader.setDevice(file);
 
     while (!xmlReader.atEnd()) {
-        qDebug() << "xmlReader.readElementText()";
-        // Read next element
         QXmlStreamReader::TokenType token = xmlReader.readNext();
-        //If token is just StartDocument - go to next
         if (token == QXmlStreamReader::StartDocument) {
             continue;
         }
-        //If token is StartElement - read it
         if (token == QXmlStreamReader::StartElement) {
             if (xmlReader.name() == tr("TODOLIST")) {
                 continue;
@@ -92,5 +88,5 @@ void MainWindow::onOpenFileClicked() {
     }
 
     xmlReader.clear();
-    file.close();
+    file->close();
 }

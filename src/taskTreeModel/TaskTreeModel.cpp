@@ -5,13 +5,16 @@
 #include "TaskTreeModel.h"
 
 #include <QStringList>
+#include <QXmlStreamReader>
+#include <QMessageBox>
 
-TaskTreeModel::TaskTreeModel(QFile &file, QObject *parent)
+TaskTreeModel::TaskTreeModel(QFile *file, QObject *parent)
         : QAbstractItemModel(parent) {
-    QByteArray data = file.readAll();
+    QByteArray data = file->readAll();
     qDebug() << "Data: " << data;
-    rootItem = new TaskTreeItem({tr("Title"), tr("Summary")});
-    setupModelData(data.split('\n'), rootItem);
+    rootItem = new TaskTreeItem({tr("Title"), tr("ID"), tr("Description")});
+//    setupModelData(data.split('\n'), rootItem);
+    setupModelData(file, rootItem);
 }
 
 TaskTreeModel::~TaskTreeModel() {
@@ -100,9 +103,90 @@ int TaskTreeModel::rowCount(const QModelIndex &parent) const {
     return parentItem->childCount();
 }
 
-void TaskTreeModel::setupModelData(QList<QByteArray> lines, TaskTreeItem *parent) {
+void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
     QVector<TaskTreeItem *> parents;
     parents << parent;
+
+
+    QString filePath(":files/data.xml");
+    auto *file = new QFile(filePath);
+    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
+        //QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
+        file->close();
+    }
+
+    QXmlStreamReader xmlReader;
+    xmlReader.setDevice(file);
+
+    while (!xmlReader.atEnd()) {
+        QXmlStreamReader::TokenType token = xmlReader.readNext();
+
+        if (token == QXmlStreamReader::StartDocument) {
+            qDebug() << "StartDocument";
+            continue;
+        }
+
+        if (token == QXmlStreamReader::EndDocument) {
+            qDebug() << "EndDocument";
+        }
+
+        if (token == QXmlStreamReader::StartElement) {
+            qDebug() << "StartElement";
+        }
+
+        if (token == QXmlStreamReader::EndElement) {
+            qDebug() << "EndElement";
+        }
+
+        if (token == QXmlStreamReader::Characters) {
+            qDebug() << "Characters";
+        }
+
+
+        if (token == QXmlStreamReader::StartElement) {
+            if (xmlReader.name() == tr("TODOLIST")) {
+                continue;
+            }
+
+            if (xmlReader.name() == tr("TASK")) {
+                const QString &title = xmlReader.attributes().value("TITLE").toString();
+                const QString &id = xmlReader.attributes().value("ID").toString();
+                qDebug() << title;
+                QVector<QVariant> task;
+                task << QList<QVariant>({QVariant(title), QVariant(id)});
+                rootItem->appendChild(new TaskTreeItem(task, rootItem));
+
+//                while (xmlReader.readNextStartElement()){
+//                    QVector<QVariant> subTask2;
+//                    subTask2 << QList<QVariant>({QVariant("SubTask 1"), QVariant("2")});
+//                    TaskTreeItem *pItem = parents.last()->child(0);
+//                    pItem->appendChild(new TaskTreeItem(subTask2, pItem));
+//                }
+            }
+        }
+    }
+
+    if (xmlReader.hasError()) {
+        qDebug() << "ERROR";
+        //QMessageBox::critical(this, "Error read file", xmlReader.errorString(), QMessageBox::Ok);
+    }
+
+    xmlReader.clear();
+    file->close();
+
+    /*QVector<QVariant> task1;
+    task1 << QList<QVariant>({QVariant("Task 1"), QVariant("1")});
+    parents.last()->appendChild(new TaskTreeItem(task1, parents.last()));
+
+    QVector<QVariant> subTask2;
+    subTask2 << QList<QVariant>({QVariant("SubTask 1"), QVariant("2")});
+    TaskTreeItem *pItem = parents.last()->child(0);
+    pItem->appendChild(new TaskTreeItem(subTask2, pItem));
+
+    QVector<QVariant> task2;
+    task2 << QList<QVariant>({QVariant("Task 2"), QVariant("3")});
+    rootItem->appendChild(new TaskTreeItem(task2, rootItem));*/
+
     /*
     QVector<int> indentations;
     indentations << 0;
@@ -146,17 +230,4 @@ void TaskTreeModel::setupModelData(QList<QByteArray> lines, TaskTreeItem *parent
         }
         ++number;
     }*/
-
-    QVector<QVariant> task1;
-    task1 << QList<QVariant>({QVariant("Task 1"), QVariant("1")});
-    parents.last()->appendChild(new TaskTreeItem(task1, parents.last()));
-
-    QVector<QVariant> subTask2;
-    subTask2 << QList<QVariant>({QVariant("SubTask 1"), QVariant("2")});
-    TaskTreeItem *pItem = parents.last()->child(0);
-    pItem->appendChild(new TaskTreeItem(subTask2, pItem));
-
-    QVector<QVariant> task2;
-    task2 << QList<QVariant>({QVariant("Task 2"), QVariant("3")});
-    rootItem->appendChild(new TaskTreeItem(task2, rootItem));
 }
