@@ -5,15 +5,15 @@
 #include <QFile>
 #include <QLabel>
 #include <QLayout>
-#include "mainWindow.h"
+#include "mainWindowOld.h"
 #include "src/taskTreeModel/TaskTreeModel.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
-//    MainWindow mainWindow;
-//    mainWindow.show();
+    MainWindowOld mainWindow;
+    mainWindow.show();
 
-    QFile file(":files/data.txt");
+    /*QFile file(":files/data.txt");
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "Error open file!";
         return 0;
@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
     splitter->addWidget(treeView);
     splitter->addWidget(label);
     splitter->setSizes(QList<int>({200, 100}));
-    splitter->show();
+    splitter->show();*/
 
     return QApplication::exec();
 }

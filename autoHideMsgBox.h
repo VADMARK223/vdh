@@ -6,7 +6,7 @@
 #define VDH_AUTOHIDEMSGBOX_H
 
 #include <QMessageBox>
-#include "mainWindow.h"
+#include "mainWindowOld.h"
 
 class AutoHideMsgBox : public QMessageBox {
 Q_OBJECT
@@ -17,7 +17,7 @@ private:
 public:
     void setTimeout(int value);
 
-    explicit AutoHideMsgBox(int timeout, MainWindow *parent = nullptr);
+    explicit AutoHideMsgBox(int timeout, MainWindowOld *parent = nullptr);
 
 protected:
     void showEvent(QShowEvent *event) override;

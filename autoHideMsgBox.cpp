@@ -7,7 +7,7 @@
 
 using namespace std;
 
-AutoHideMsgBox::AutoHideMsgBox(int timeout, MainWindow *parent) : QMessageBox(parent) {
+AutoHideMsgBox::AutoHideMsgBox(int timeout, MainWindowOld *parent) : QMessageBox(parent) {
     setIcon(QMessageBox::Information);
     setText("I am online!");
     setTimeout(timeout);

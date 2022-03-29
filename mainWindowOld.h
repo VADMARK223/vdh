@@ -2,14 +2,14 @@
 // Created by v.markitanov on 22.03.2022.
 //
 
-#ifndef VDH_MAINWINDOW_H
-#define VDH_MAINWINDOW_H
+#ifndef VDH_MAINWINDOWOLD_H
+#define VDH_MAINWINDOWOLD_H
 
 #include <QDialog>
 #include <QPushButton>
 #include <QTimer>
 
-class MainWindow : public QDialog {
+class MainWindowOld : public QDialog {
 Q_OBJECT
 
 private:
@@ -22,7 +22,7 @@ private:
 public:
     static const int TIMEOUT = 4000;
 
-    MainWindow();
+    MainWindowOld();
 
 public slots:
 
@@ -31,4 +31,4 @@ public slots:
     void finishBtnClickedHandler();
 };
 
-#endif //VDH_MAINWINDOW_H
+#endif //VDH_MAINWINDOWOLD_H

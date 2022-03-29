@@ -1,7 +1,7 @@
 //
 // Created by v.markitanov on 22.03.2022.
 //
-#include "mainWindow.h"
+#include "mainWindowOld.h"
 #include "autoHideMsgBox.h"
 #include <iostream>
 
@@ -9,7 +9,7 @@
 
 using namespace std;
 
-MainWindow::MainWindow() {
+MainWindowOld::MainWindowOld() {
     connect(pStartBtn, SIGNAL(clicked(bool)), this, SLOT(startBtnClickedHandler()));
 
     auto *pHLayout = new QHBoxLayout;
@@ -24,25 +24,25 @@ MainWindow::MainWindow() {
     connect(pCloseBtn, SIGNAL(clicked(bool)), this, SLOT(close()));
     pHLayout->addWidget(pCloseBtn);
 
-    connect(timer, &QTimer::timeout, this, &MainWindow::timerHandler);
+    connect(timer, &QTimer::timeout, this, &MainWindowOld::timerHandler);
 }
 
-void MainWindow::startBtnClickedHandler() {
+void MainWindowOld::startBtnClickedHandler() {
     pStartBtn->setEnabled(false);
     pFinishBtn->setEnabled(true);
 
-    QTimer::singleShot(0, this, &MainWindow::timerHandler);
+    QTimer::singleShot(0, this, &MainWindowOld::timerHandler);
     timer->start(TIMEOUT);
 }
 
-void MainWindow::finishBtnClickedHandler() {
+void MainWindowOld::finishBtnClickedHandler() {
     pStartBtn->setEnabled(true);
     pFinishBtn->setEnabled(false);
 
     timer->stop();
 }
 
-void MainWindow::timerHandler() {
+void MainWindowOld::timerHandler() {
     cout << "Timer handler." << endl;
 
     auto *autoHideMsgBox = new AutoHideMsgBox(TIMEOUT / 2, this);
