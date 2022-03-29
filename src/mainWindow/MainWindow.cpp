@@ -2,22 +2,24 @@
 // Created by v.markitanov on 29.03.2022.
 //
 
+#include "MainWindow.h"
+#include <QMenuBar>
 #include <QFile>
 #include <QTreeView>
 #include <QLabel>
 #include <QSplitter>
-#include "MainWindow.h"
-#include "../taskTreeModel/TaskTreeModel.h"
+#include <QShortcut>
 
 MainWindow::MainWindow(QWidget *parent) {
+    auto *menuBar = new QMenuBar;
+    auto *menu = new QMenu("&File");
+    menu->addAction("E&xit", this, SLOT(close()), tr("Alt+F4"));
+    menu->addSeparator();
 
-    QFile file(":files/data.txt");
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Error open file!";
-    }
+    menuBar->addMenu(menu);
+    setMenuBar(menuBar);
 
-    auto *model = new TaskTreeModel(file.readAll());
-    file.close();
+    auto *model = createModel();
 
     auto *treeView = new QTreeView();
     treeView->setHeaderHidden(false);
@@ -34,4 +36,15 @@ MainWindow::MainWindow(QWidget *parent) {
     splitter->show();
 
     setCentralWidget(splitter);
+}
+
+TaskTreeModel *MainWindow::createModel() {
+    QFile file(":files/data.txt");
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Error open file!";
+    }
+
+    auto *model = new TaskTreeModel(file.readAll());
+    file.close();
+    return model;
 }
