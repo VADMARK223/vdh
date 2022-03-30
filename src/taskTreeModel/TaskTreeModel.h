@@ -5,13 +5,17 @@
 #ifndef VDH_TASKTREEMODEL_H
 #define VDH_TASKTREEMODEL_H
 
+#include <QStringList>
+#include <QXmlStreamReader>
+#include <QMessageBox>
 #include <QStandardItemModel>
 #include <QFile>
+
 #include "../taskTreeItem/TaskTreeItem.h"
 
 class TaskTreeModel : public QAbstractItemModel {
 public:
-    explicit TaskTreeModel(QFile *file, QObject *parent = nullptr);
+    explicit TaskTreeModel(QObject *parent = nullptr);
 
     ~TaskTreeModel() override;
 
@@ -29,9 +33,8 @@ public:
 
     [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
 
+    void setModelDate(QFile *file);
 protected:
-    void setupModelData(QFile *file, TaskTreeItem *parent);
-
     TaskTreeItem *rootItem;
 };
 

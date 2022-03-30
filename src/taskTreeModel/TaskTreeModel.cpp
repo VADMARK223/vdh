@@ -4,21 +4,12 @@
 
 #include "TaskTreeModel.h"
 
-#include <QStringList>
-#include <QXmlStreamReader>
-#include <QMessageBox>
-
 #define ID_INDEX 0
 #define PARENT_ID_INDEX 1
 #define DEPTH_INDEX 2
 
-TaskTreeModel::TaskTreeModel(QFile *file, QObject *parent)
-        : QAbstractItemModel(parent) {
-    QByteArray data = file->readAll();
-    qDebug() << "Data: " << data;
-    rootItem = new TaskTreeItem({/*tr("Title"),*/ tr("ID"), tr("Parent ID"), tr("Depth")});
-//    setupModelData(data.split('\n'), rootItem);
-    setupModelData(file, rootItem);
+TaskTreeModel::TaskTreeModel(QObject *parent) : QAbstractItemModel(parent) {
+    rootItem = new TaskTreeItem({tr("ID"), tr("Parent ID"), tr("Depth")});
 }
 
 TaskTreeModel::~TaskTreeModel() {
@@ -107,16 +98,9 @@ int TaskTreeModel::rowCount(const QModelIndex &parent) const {
     return parentItem->childCount();
 }
 
-void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
+void TaskTreeModel::setModelDate(QFile *file) {
     QVector<TaskTreeItem *> parents;
-    parents << parent;
-
-    QString filePath(":files/data.xml");
-    auto *file = new QFile(filePath);
-    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
-        //QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
-        file->close();
-    }
+    parents << rootItem;
 
     QXmlStreamReader xmlReader;
     xmlReader.setDevice(file);
@@ -125,6 +109,7 @@ void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
 
     QVector<QVector<QVariant>> dataList;
     bool rootItemInit = false;
+
     while (!xmlReader.atEnd()) {
         QXmlStreamReader::TokenType token = xmlReader.readNext();
 
@@ -141,8 +126,8 @@ void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
 
                 if (parentId) {
                     // Find parent
-                    for (int i = 0; i < dataList.size(); ++i) {
-                        auto &data = const_cast<QVector<QVariant> &>(dataList.at(i));
+                    for (const auto &i: dataList) {
+                        auto &data = const_cast<QVector<QVariant> &>(i);
                         int currentId = data.at(ID_INDEX).value<int>();
                         int parentDepth = data.at(DEPTH_INDEX).value<int>();
                         if (currentId == parentId) {
@@ -158,8 +143,8 @@ void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
         }
     }
 
-    for (int i = 0; i < dataList.size(); ++i) {
-        auto &data = const_cast<QVector<QVariant> &>(dataList.at(i));
+    for (const auto &i: dataList) {
+        auto &data = const_cast<QVector<QVariant> &>(i);
 
         if (!rootItemInit) {
             rootItemInit = true;
@@ -171,12 +156,11 @@ void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
             int parentId = data.at(PARENT_ID_INDEX).value<int>();
 
             TaskTreeItem *parentItem = nullptr;
-            for (int j = 0; j < parents.size(); ++j) {
-                auto *&pItem = const_cast<TaskTreeItem *&>(parents.at(j));
-                int tempId = pItem->data(ID_INDEX).value<int>();
-                int tempDepth = pItem->data(DEPTH_INDEX).value<int>();
-                if ((depth - 1) == tempDepth && tempId == parentId) {
-                    parentItem = pItem;
+            for (auto parent: parents) {
+                auto *&pParent = const_cast<TaskTreeItem *&>(parent);
+                if ((depth - 1) == pParent->data(DEPTH_INDEX).value<int>()
+                    && pParent->data(ID_INDEX).value<int>() == parentId) {
+                    parentItem = pParent;
                 }
             }
 

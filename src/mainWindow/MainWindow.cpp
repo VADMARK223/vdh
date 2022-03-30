@@ -42,7 +42,6 @@ MainWindow::MainWindow(QWidget *parent) {
 }
 
 TaskTreeModel *MainWindow::createModel() {
-//    QString filePath(":files/data.txt");
     QString filePath(":files/data.xml");
     auto *file = new QFile(filePath);
     if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -51,7 +50,8 @@ TaskTreeModel *MainWindow::createModel() {
         return {};
     }
 
-    auto *model = new TaskTreeModel(file);
+    auto *model = new TaskTreeModel();
+    model->setModelDate(file);
     file->close();
     return model;
 }
