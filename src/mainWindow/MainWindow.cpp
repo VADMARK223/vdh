@@ -5,14 +5,13 @@
 #include "MainWindow.h"
 #include <QMenuBar>
 #include <QFile>
-#include <QTreeView>
 #include <QLabel>
 #include <QSplitter>
 #include <QShortcut>
 #include <QMessageBox>
-#include <QXmlStreamReader>
+#include <QDir>
 
-MainWindow::MainWindow(QWidget *parent) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     auto *menuBar = new QMenuBar;
 
     auto *fileMenu = new QMenu("&File");
@@ -22,18 +21,21 @@ MainWindow::MainWindow(QWidget *parent) {
     menuBar->addMenu(fileMenu);
     setMenuBar(menuBar);
 
-    auto *model = createModel();
-
-    auto *treeView = new QTreeView();
-    treeView->setHeaderHidden(false);
-    treeView->setModel(model);
+    _treeView->setHeaderHidden(false);
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnreachableCode"
+    if (AUTO_LOAD_MODEL) { // NOLINT
+        QString filePath(":files/data.xml");
+        loadModelFromByFilePath(filePath);
+    }
+#pragma clang diagnostic pop
 
     QPixmap pixmap(":images/logo.png");
     auto *label = new QLabel;
     label->setPixmap(pixmap);
 
     auto *splitter = new QSplitter;
-    splitter->addWidget(treeView);
+    splitter->addWidget(_treeView);
     splitter->addWidget(label);
     splitter->setSizes(QList<int>({200, 100}));
     splitter->show();
@@ -41,52 +43,31 @@ MainWindow::MainWindow(QWidget *parent) {
     setCentralWidget(splitter);
 }
 
-TaskTreeModel *MainWindow::createModel() {
-    QString filePath(":files/data.xml");
-    auto *file = new QFile(filePath);
-    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
+void MainWindow::onOpenFileClicked() {
+    QString filter = "Tasklist (*.xml)";
+    QString filePath = QFileDialog::getOpenFileName(this, "Open Tasklist", QDir::homePath(), filter);
+    loadModelFromByFilePath(filePath);
+}
+
+void MainWindow::loadModelFromByFilePath(const QString &filePath) {
+    if (filePath.isEmpty()) {
+        return;
+    }
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
-        file->close();
-        return {};
+        file.close();
+        return;
     }
 
     auto *model = new TaskTreeModel();
-    model->setModelDate(file);
-    file->close();
-    return model;
+    model->setModelDate(&file);
+    setModel(model);
+
+    file.close();
 }
 
-void MainWindow::onOpenFileClicked() {
-    QString filePath(":files/data.xml");
-    auto *file = new QFile(filePath);
-    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
-        file->close();
-    }
-
-    QXmlStreamReader xmlReader;
-    xmlReader.setDevice(file);
-
-    while (!xmlReader.atEnd()) {
-        QXmlStreamReader::TokenType token = xmlReader.readNext();
-        if (token == QXmlStreamReader::StartDocument) {
-            continue;
-        }
-        if (token == QXmlStreamReader::StartElement) {
-            if (xmlReader.name() == tr("TODOLIST")) {
-                continue;
-            }
-
-            if (xmlReader.name() == tr("TASK")) {
-                qDebug() << xmlReader.readElementText();
-            }
-        }
-    }
-
-    if (xmlReader.hasError()) {
-        QMessageBox::critical(this, "Error read file", xmlReader.errorString(), QMessageBox::Ok);
-    }
-
-    xmlReader.clear();
-    file->close();
+void MainWindow::setModel(TaskTreeModel *pModel) {
+    _treeView->setModel(pModel);
 }

@@ -5,19 +5,28 @@
 #ifndef VDH_MAINWINDOW_H
 #define VDH_MAINWINDOW_H
 
-#include <QMainWindow>
 #include "../taskTreeModel/TaskTreeModel.h"
+#include <QMainWindow>
+#include <QFileDialog>
+#include <QTreeView>
+
+const bool AUTO_LOAD_MODEL = false;
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
-    TaskTreeModel *createModel();
+private:
+    QTreeView * _treeView = new QTreeView();
 
 public slots:
 
     void onOpenFileClicked();
+
+    void loadModelFromByFilePath(const QString& qString);
+
+    void setModel(TaskTreeModel *pModel);
 };
 
 #endif //VDH_MAINWINDOW_H
