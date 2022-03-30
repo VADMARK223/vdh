@@ -10,16 +10,13 @@
 #include <QShortcut>
 #include <QMessageBox>
 #include <QDir>
+#include <QToolBar>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-    auto *menuBar = new QMenuBar;
-
-    auto *fileMenu = new QMenu("&File");
-    fileMenu->addAction("&Open Tasklist...", this, SLOT(onOpenFileClicked()), tr("Ctrl+O"));
-    fileMenu->addSeparator();
-    fileMenu->addAction("E&xit", this, SLOT(close()), tr("Alt+F4"));
-    menuBar->addMenu(fileMenu);
-    setMenuBar(menuBar);
+    setMenuBar(createMenuBar());
+    auto *toolBar = new QToolBar();
+    toolBar->addAction(QPixmap(":images/file-open-20.png"), "Open Tasklist (Ctrl+O)", this, SLOT(onOpenFileClicked()));
+    addToolBar(toolBar);
 
     _treeView->setHeaderHidden(false);
 #pragma clang diagnostic push
@@ -62,7 +59,7 @@ void MainWindow::loadModelFromByFilePath(const QString &filePath) {
     }
 
     auto *model = new TaskTreeModel();
-    model->setModelDate(&file);
+    model->setModelData(&file);
     setModel(model);
 
     file.close();
@@ -70,4 +67,21 @@ void MainWindow::loadModelFromByFilePath(const QString &filePath) {
 
 void MainWindow::setModel(TaskTreeModel *pModel) {
     _treeView->setModel(pModel);
+}
+
+QMenuBar *MainWindow::createMenuBar() {
+    auto *menuBar = new QMenuBar;
+
+    auto *fileMenu = new QMenu("&File");
+    fileMenu->addAction("&Open Tasklist...", this, SLOT(onOpenFileClicked()), tr("Ctrl+O"));
+    fileMenu->addSeparator();
+    fileMenu->addAction("E&xit", this, SLOT(close()), tr("Alt+F4"));
+
+    auto *helpMenu = new QMenu("&Help");
+    helpMenu->addAction("&About vdh");
+
+    menuBar->addMenu(fileMenu);
+    menuBar->addMenu(helpMenu);
+
+    return menuBar;
 }

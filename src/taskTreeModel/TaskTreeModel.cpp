@@ -17,8 +17,10 @@ TaskTreeModel::~TaskTreeModel() {
 }
 
 int TaskTreeModel::columnCount(const QModelIndex &parent) const {
-    if (parent.isValid())
+    if (parent.isValid()) {
         return static_cast<TaskTreeItem *>(parent.internalPointer())->columnCount();
+    }
+
     return rootItem->columnCount();
 }
 
@@ -27,20 +29,37 @@ QVariant TaskTreeModel::data(const QModelIndex &index, int role) const {
         return {};
     }
 
-    if (role != Qt::DisplayRole) {
-        return {};
+    switch (role) {
+        case Qt::DisplayRole: {
+            auto *item = static_cast<TaskTreeItem *>(index.internalPointer());
+            return item->data(index.column());
+        }
+
+        case Qt::SizeHintRole: {
+            return QSize(0, 20);
+        }
+
+        case Qt::BackgroundRole: {
+            auto *item = static_cast<TaskTreeItem *>(index.internalPointer());
+            int depth = item->data(DEPTH_INDEX).value<int>();
+            if (depth >= 2) {
+                return QBrush(Qt::red);
+            }
+        }
+
+
+        default:
+//            qDebug() << "Role:" << role;
+            return {};
     }
-
-    auto *item = static_cast<TaskTreeItem *>(index.internalPointer());
-
-    return item->data(index.column());
 }
 
 Qt::ItemFlags TaskTreeModel::flags(const QModelIndex &index) const {
-    if (!index.isValid())
+    if (!index.isValid()) {
         return Qt::NoItemFlags;
+    }
 
-    return QAbstractItemModel::flags(index);
+    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
 QVariant TaskTreeModel::headerData(int section, Qt::Orientation orientation, int role) const {
@@ -74,7 +93,6 @@ QModelIndex TaskTreeModel::parent(const QModelIndex &index) const {
         return {};
     }
 
-
     auto *childItem = static_cast<TaskTreeItem *>(index.internalPointer());
     TaskTreeItem *parentItem = childItem->parentItem();
 
@@ -98,7 +116,7 @@ int TaskTreeModel::rowCount(const QModelIndex &parent) const {
     return parentItem->childCount();
 }
 
-void TaskTreeModel::setModelDate(QFile *file) {
+void TaskTreeModel::setModelData(QFile *file) {
     QVector<TaskTreeItem *> parents;
     parents << rootItem;
 
@@ -180,4 +198,11 @@ void TaskTreeModel::setModelDate(QFile *file) {
 
     xmlReader.clear();
     file->close();
+}
+
+bool TaskTreeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+    if (role == Qt::EditRole) {
+        qDebug() << "Set data:" << index << "Value:" << value;
+        return QAbstractItemModel::setData(index, value, role);
+    }
 }

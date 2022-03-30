@@ -33,7 +33,10 @@ public:
 
     [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
 
-    void setModelDate(QFile *file);
+    bool setData(const QModelIndex &index, const QVariant &value, int role) override;
+
+    void setModelData(QFile *file);
+
 protected:
     TaskTreeItem *rootItem;
 };

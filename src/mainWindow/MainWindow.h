@@ -10,23 +10,25 @@
 #include <QFileDialog>
 #include <QTreeView>
 
-const bool AUTO_LOAD_MODEL = false;
+const bool AUTO_LOAD_MODEL = true;
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
-private:
-    QTreeView * _treeView = new QTreeView();
-
 public slots:
 
     void onOpenFileClicked();
 
-    void loadModelFromByFilePath(const QString& qString);
+    void loadModelFromByFilePath(const QString &qString);
 
     void setModel(TaskTreeModel *pModel);
+
+private:
+    QTreeView *_treeView = new QTreeView();
+
+    QMenuBar *createMenuBar();
 };
 
 #endif //VDH_MAINWINDOW_H
