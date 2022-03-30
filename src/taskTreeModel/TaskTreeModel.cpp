@@ -151,7 +151,7 @@ void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
                 parents.last()->appendChild(pItem);
 
                 qDebug() << id << "parents:" << parents.size();
-                if (!p.isEmpty()) {
+                if (!p.isEmpty() || xmlReader.attributes().hasAttribute("H")) {
                     childCount = pItem->data(1).toInt();
                     tasksWithChild << childCount;
                     qDebug() << "Has child: " << childCount;
