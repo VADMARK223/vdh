@@ -12,7 +12,7 @@ TaskTreeModel::TaskTreeModel(QFile *file, QObject *parent)
         : QAbstractItemModel(parent) {
     QByteArray data = file->readAll();
     qDebug() << "Data: " << data;
-    rootItem = new TaskTreeItem({tr("Title"), tr("ID"), tr("Description")});
+    rootItem = new TaskTreeItem({tr("Title"), tr("ID"), tr("Parent")});
 //    setupModelData(data.split('\n'), rootItem);
     setupModelData(file, rootItem);
 }
@@ -117,6 +117,21 @@ void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
     QXmlStreamReader xmlReader;
     xmlReader.setDevice(file);
 
+//    if (xmlReader.readNextStartElement()) {
+//        if (xmlReader.name().toString() == "TODOLIST") {
+//            while (xmlReader.readNextStartElement()) {
+//                const QString &title = xmlReader.attributes().value("TITLE").toString();
+//                const QString &id = xmlReader.attributes().value("ID").toString();
+//                qDebug() << title;
+//                xmlReader.skipCurrentElement();
+//            }
+//        } else {
+//            xmlReader.raiseError(QObject::tr("Incorrect file."));
+//        }
+//    }
+
+    int depth = 0;
+    bool rootInit = false;
     while (!xmlReader.atEnd()) {
         QXmlStreamReader::TokenType token = xmlReader.readNext();
 
@@ -128,38 +143,88 @@ void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
             if (xmlReader.name() == tr("TASK")) {
                 const QString &title = xmlReader.attributes().value("TITLE").toString();
                 const QString &id = xmlReader.attributes().value("ID").toString();
-                QVector<QVariant> task;
-                task << QList<QVariant>({QVariant(title), QVariant(id)});
+                const QString &pTask = xmlReader.attributes().value("P").toString();
+                bool isSub = !pTask.isEmpty();
 
-                qDebug() << title << " Size: " << parents.size() << " Count: " << parents.count();
+                QVector<QVariant> data;
+                data << QList<QVariant>({QVariant(title), QVariant(id), QVariant(pTask)});
 
-                auto *pItem = new TaskTreeItem(task, parents.last());
-                parents.last()->appendChild(pItem);
-                parents << pItem;
-                parents.pop_back();
+                qDebug() << "   ";
+                qDebug() << title << " Size: " << parents.size() << " Count: " << parents.count() << " Is sub:"
+                         << isSub;
 
-                /*if (isSubTask) {
-                    TaskTreeItem *pItem = parents.last()->child(0);
-                    qDebug() << "1";
-                    pItem->appendChild(new TaskTreeItem(task, pItem));
+//                if (parents.last() == rootItem) {
+                if (!rootInit) {
+                    rootInit = true;
+                    qDebug() << "ROOT";
+                    auto *pItem = new TaskTreeItem(data, parents.last());
+                    parents.last()->appendChild(pItem);
                     parents << pItem;
+                    depth++;
                 } else {
-                    TaskTreeItem *pItem = parents.last()->child(0);
-                    if (pItem == nullptr) {
-                        qDebug() << "Add root";
-                        parents.last()->appendChild(new TaskTreeItem(task, parents.last()));
-                    } else {
-                        qDebug() << "2";
-                        pItem->appendChild(new TaskTreeItem(task, pItem));
-                        parents.pop_back();
+                    bool needIncreaseLast = false;
+                    if (isSub) {
+                        auto &parentId = const_cast<QVariant &>(data.at(2));
+                        qDebug() << "Subtask parent id:" << parentId.toString();
+                        TaskTreeItem *&pLast = parents.last();
+                        const QVariant &lastId = pLast->data(1);
+                        qDebug() << "Last id:" << lastId.toString();
+                        if (parentId == lastId) {
+                            qDebug() << "GOOD";
+                            needIncreaseLast = true;
+                        }
                     }
+
+                    if (needIncreaseLast) {
+                        auto *pItem = new TaskTreeItem(data, parents.last());
+                        parents.last()->appendChild(pItem);
+
+                        qDebug() << "Increase";
+                        parents << pItem;
+                        depth++;
+                    } else {
+                        qDebug() << "Depth:" << depth;
+                        for (int i = 0; i < depth; ++i) {
+                            qDebug() << "Pop";
+                            parents.pop_back();
+                        }
+                        depth = 0;
+
+                        auto *pItem = new TaskTreeItem(data, parents.last());
+                        parents.last()->appendChild(pItem);
+                        parents << pItem;
+                        depth++;
+                    }
+                }
+
+                /*if (isSub) {
+                    const QVariant &parentId = pItem->data(2);
+                    qDebug() << "Subtask parent id:" << parentId.toString();
+                } else {
+
                 }*/
+
+//                if (isSub) {
+//                    qDebug() << "Add sub.";
+//                    qDebug() << "Child count:" << parents.last()->childCount();
+//                    auto *pItem = new TaskTreeItem(task, parents.last());
+//                    parents.last()->appendChild(pItem);
+
+//                    TaskTreeItem *asd = parents.last()->child(0);
+//                    const QVariant &variant = asd->data(0);
+//                    qDebug() << "ID:"<<variant.toString();
+//
+//                } else {
+//                    qDebug() << "Add task.";
+//                    qDebug() << "Child count:" << parents.last()->childCount();
+//
+//                    parents << pItem;
+//                }
             }
         }
     }
-
     if (xmlReader.hasError()) {
-        qDebug() << "ERROR";
+        qDebug() << "Error read file:" << xmlReader.errorString();
         //QMessageBox::critical(this, "Error read file", xmlReader.errorString(), QMessageBox::Ok);
     }
 
