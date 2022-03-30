@@ -12,7 +12,7 @@ TaskTreeModel::TaskTreeModel(QFile *file, QObject *parent)
         : QAbstractItemModel(parent) {
     QByteArray data = file->readAll();
     qDebug() << "Data: " << data;
-    rootItem = new TaskTreeItem({tr("Title"), tr("ID"), tr("Parent")});
+    rootItem = new TaskTreeItem({/*tr("Title"),*/ tr("ID"), tr("Child")});
 //    setupModelData(data.split('\n'), rootItem);
     setupModelData(file, rootItem);
 }
@@ -104,6 +104,8 @@ int TaskTreeModel::rowCount(const QModelIndex &parent) const {
 }
 
 void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
+    QVector<int> tasksWithChild;
+
     QVector<TaskTreeItem *> parents;
     parents << parent;
 
@@ -130,8 +132,7 @@ void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
 //        }
 //    }
 
-    int depth = 0;
-    bool rootInit = false;
+    int childCount = 0;
     while (!xmlReader.atEnd()) {
         QXmlStreamReader::TokenType token = xmlReader.readNext();
 
@@ -140,69 +141,115 @@ void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
         }
 
         if (token == QXmlStreamReader::StartElement) {
+            const QString &id = xmlReader.attributes().value("ID").toString();
+            const QString &p = xmlReader.attributes().value("P").toString();
             if (xmlReader.name() == tr("TASK")) {
-                const QString &title = xmlReader.attributes().value("TITLE").toString();
-                const QString &id = xmlReader.attributes().value("ID").toString();
-                const QString &pTask = xmlReader.attributes().value("P").toString();
-                bool isSub = !pTask.isEmpty();
-
                 QVector<QVariant> data;
-                data << QList<QVariant>({QVariant(title), QVariant(id), QVariant(pTask)});
+                data << QList<QVariant>({QVariant(id), QVariant(p)});
 
-                qDebug() << "   ";
-                qDebug() << title << " Size: " << parents.size() << " Count: " << parents.count() << " Is sub:"
-                         << isSub;
+                auto *pItem = new TaskTreeItem(data, parents.last());
+                parents.last()->appendChild(pItem);
 
-//                if (parents.last() == rootItem) {
-                if (!rootInit) {
-                    rootInit = true;
-                    qDebug() << "ROOT";
-                    auto *pItem = new TaskTreeItem(data, parents.last());
-                    parents.last()->appendChild(pItem);
+                qDebug() << id << "parents:" << parents.size();
+                if (!p.isEmpty()) {
+                    childCount = pItem->data(1).toInt();
+                    tasksWithChild << childCount;
+                    qDebug() << "Has child: " << childCount;
                     parents << pItem;
-                    depth++;
                 } else {
-                    bool needIncreaseLast = false;
-                    if (isSub) {
-                        auto &parentId = const_cast<QVariant &>(data.at(2));
-                        qDebug() << "Subtask parent id:" << parentId.toString();
-                        TaskTreeItem *&pLast = parents.last();
-                        const QVariant &lastId = pLast->data(1);
-                        qDebug() << "Last id:" << lastId.toString();
-                        if (parentId == lastId) {
-                            qDebug() << "GOOD";
-                            needIncreaseLast = true;
-                        }
+                    if (tasksWithChild.isEmpty()) {
+                        qDebug() << "EMPRTY";
+                        continue;
+                    }
+                    qDebug() << "Decrise " << tasksWithChild.last();
+                    tasksWithChild.last()--;
+
+                    if (tasksWithChild.last() == 0) {
+                        tasksWithChild.pop_back();
+                        qDebug() << "POP";
+                        parents.pop_back();
                     }
 
-                    if (needIncreaseLast) {
-                        auto *pItem = new TaskTreeItem(data, parents.last());
-                        parents.last()->appendChild(pItem);
-
-                        qDebug() << "Increase";
-                        parents << pItem;
-                        depth++;
-                    } else {
-                        qDebug() << "Depth:" << depth;
-                        for (int i = 0; i < depth; ++i) {
-                            qDebug() << "Pop";
-                            parents.pop_back();
-                        }
-                        depth = 0;
-
-                        auto *pItem = new TaskTreeItem(data, parents.last());
-                        parents.last()->appendChild(pItem);
-                        parents << pItem;
-                        depth++;
-                    }
                 }
+            }
+        }
+    }
 
-                /*if (isSub) {
-                    const QVariant &parentId = pItem->data(2);
-                    qDebug() << "Subtask parent id:" << parentId.toString();
-                } else {
+    qDebug() << tasksWithChild.size();
 
-                }*/
+//    int depth = 0;
+//    bool rootInit = false;
+//    while (!xmlReader.atEnd()) {
+//        QXmlStreamReader::TokenType token = xmlReader.readNext();
+//
+//        if (token == QXmlStreamReader::StartDocument) {
+//            continue;
+//        }
+//
+//        if (token == QXmlStreamReader::StartElement) {
+//            if (xmlReader.name() == tr("TASK")) {
+//                const QString &title = xmlReader.attributes().value("TITLE").toString();
+//                const QString &id = xmlReader.attributes().value("ID").toString();
+//                const QString &pTask = xmlReader.attributes().value("P").toString();
+//                bool isSub = !pTask.isEmpty();
+//
+//                QVector<QVariant> data;
+//                data << QList<QVariant>({QVariant(title), QVariant(id), QVariant(pTask)});
+//
+//                qDebug() << "   ";
+//                qDebug() << title << " Size: " << parents.size() << " Count: " << parents.count() << " Is sub:"
+//                         << isSub;
+//
+////                if (parents.last() == rootItem) {
+//                if (!rootInit) {
+//                    rootInit = true;
+//                    qDebug() << "ROOT";
+//                    auto *pItem = new TaskTreeItem(data, parents.last());
+//                    parents.last()->appendChild(pItem);
+//                    parents << pItem;
+//                    depth++;
+//                } else {
+//                    bool needIncreaseLast = false;
+//                    if (isSub) {
+//                        auto &parentId = const_cast<QVariant &>(data.at(2));
+//                        qDebug() << "Subtask parent id:" << parentId.toString();
+//                        TaskTreeItem *&pLast = parents.last();
+//                        const QVariant &lastId = pLast->data(1);
+//                        qDebug() << "Last id:" << lastId.toString();
+//                        if (parentId == lastId) {
+//                            qDebug() << "GOOD";
+//                            needIncreaseLast = true;
+//                        }
+//                    }
+//
+//                    if (needIncreaseLast) {
+//                        auto *pItem = new TaskTreeItem(data, parents.last());
+//                        parents.last()->appendChild(pItem);
+//
+//                        qDebug() << "Increase";
+//                        parents << pItem;
+//                        depth++;
+//                    } else {
+//                        qDebug() << "Depth:" << depth;
+//                        for (int i = 0; i < depth; ++i) {
+//                            qDebug() << "Pop";
+//                            parents.pop_back();
+//                        }
+//                        depth = 0;
+//
+//                        auto *pItem = new TaskTreeItem(data, parents.last());
+//                        parents.last()->appendChild(pItem);
+//                        parents << pItem;
+//                        depth++;
+//                    }
+//                }
+
+    /*if (isSub) {
+        const QVariant &parentId = pItem->data(2);
+        qDebug() << "Subtask parent id:" << parentId.toString();
+    } else {
+
+    }*/
 
 //                if (isSub) {
 //                    qDebug() << "Add sub.";
@@ -220,9 +267,9 @@ void TaskTreeModel::setupModelData(QFile *file1, TaskTreeItem *parent) {
 //
 //                    parents << pItem;
 //                }
-            }
-        }
-    }
+//            }
+//        }
+//    }
     if (xmlReader.hasError()) {
         qDebug() << "Error read file:" << xmlReader.errorString();
         //QMessageBox::critical(this, "Error read file", xmlReader.errorString(), QMessageBox::Ok);
