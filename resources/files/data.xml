@@ -1,25 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <TODOLIST>
-    <TASK ID="1" P="">
-        <TASK ID="11" P="1">
-            <TASK ID="111" P="11"/>
-        </TASK>
-        <TASK ID="12" P="1"/>
-        <TASK ID="13" P="1"/>
-        <TASK ID="14" P="1">
-            <TASK ID="141" P="14"/>
-        </TASK>
-    </TASK>
+    <TASK ID="1" P=""/>
     <TASK ID="2" P=""/>
-    <TASK ID="3" P=""/>
-    <TASK ID="4" P="">
-        <TASK ID="41" P="4">
-            <TASK ID="411" P="41">
-                <TASK ID="4111" P="411">
-                    <TASK ID="41111" P="4111"/>
-                </TASK>
-            </TASK>
-        </TASK>
-    </TASK>
-    <TASK ID="5" P=""/>
 </TODOLIST>

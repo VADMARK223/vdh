@@ -51,3 +51,17 @@ int TaskTreeItem::row() const {
     return 0;
 }
 
+[[maybe_unused]] QString TaskTreeItem::toString() const {
+    return "TaskTreeItem(" +
+           this->data(ID_INDEX).toString() + ", " +
+           this->data(DEPTH_INDEX).toString() +
+           ")";
+}
+
+int TaskTreeItem::getId() const {
+    return this->data(ID_INDEX).toInt();
+}
+
+QVector<QVariant> TaskTreeItem::getItemData() {
+    return _itemData;
+}

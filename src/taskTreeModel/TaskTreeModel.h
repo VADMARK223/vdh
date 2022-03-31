@@ -37,7 +37,9 @@ public:
 
     void setModelData(QFile *file);
 
+    void addTask();
 protected:
+
     TaskTreeItem *rootItem;
 };
 

@@ -3,6 +3,6 @@
         <file>images/logo.png</file>
         <file>files/data.xml</file>
         <file>images/file-open-20.png</file>
-        <file>images/file-open-32.png</file>
+        <file>images/task-add-20.png</file>
     </qresource>
 </RCC>

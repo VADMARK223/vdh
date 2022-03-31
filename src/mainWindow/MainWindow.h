@@ -17,18 +17,23 @@ Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
+    void setModel(TaskTreeModel *pModel);
+
 public slots:
 
     void onOpenFileClicked();
 
     void loadModelFromByFilePath(const QString &qString);
 
-    void setModel(TaskTreeModel *pModel);
+    void addTaskAction();
 
 private:
     QTreeView *_treeView = new QTreeView();
+    TaskTreeModel *_model = new TaskTreeModel();
 
     QMenuBar *createMenuBar();
+
+    QToolBar *createToolBar();
 };
 
 #endif //VDH_MAINWINDOW_H

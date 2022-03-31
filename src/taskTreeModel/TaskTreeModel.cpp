@@ -4,12 +4,14 @@
 
 #include "TaskTreeModel.h"
 
-#define ID_INDEX 0
-#define PARENT_ID_INDEX 1
-#define DEPTH_INDEX 2
 
 TaskTreeModel::TaskTreeModel(QObject *parent) : QAbstractItemModel(parent) {
-    rootItem = new TaskTreeItem({tr("ID"), tr("Parent ID"), tr("Depth")});
+    rootItem = new TaskTreeItem({
+                                        tr("ID"),
+                                        tr("Parent ID"),
+                                        tr("Depth"),
+                                        tr("Comments")
+                                });
 }
 
 TaskTreeModel::~TaskTreeModel() {
@@ -47,7 +49,6 @@ QVariant TaskTreeModel::data(const QModelIndex &index, int role) const {
             }
         }
 
-
         default:
 //            qDebug() << "Role:" << role;
             return {};
@@ -59,12 +60,25 @@ Qt::ItemFlags TaskTreeModel::flags(const QModelIndex &index) const {
         return Qt::NoItemFlags;
     }
 
-    return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+//    auto *item = static_cast<TaskTreeItem *>(index.internalPointer());
+//    if (item->getId() == 2) {
+
+//    index.column() == ID_INDEX
+
+    if (index.column() == COMMENTS_INDEX) {
+        return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+    } else {
+        return QAbstractItemModel::flags(index);
+    }
+//    } else {
+//        return QAbstractItemModel::flags(index);
+//    }
 }
 
 QVariant TaskTreeModel::headerData(int section, Qt::Orientation orientation, int role) const {
-    if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
+    if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
         return rootItem->data(section);
+    }
 
     return {};
 }
@@ -83,8 +97,10 @@ QModelIndex TaskTreeModel::index(int row, int column, const QModelIndex &parent)
     }
 
     TaskTreeItem *childItem = parentItem->child(row);
-    if (childItem)
+    if (childItem) {
         return createIndex(row, column, childItem);
+    }
+
     return {};
 }
 
@@ -140,7 +156,7 @@ void TaskTreeModel::setModelData(QFile *file) {
                 int id = xmlReader.attributes().value("ID").toInt();
                 int parentId = xmlReader.attributes().value("P").toInt();
                 QVector<QVariant> newData;
-                newData << QList<QVariant>({QVariant(id), QVariant(parentId), QVariant(0)});
+                newData << QList<QVariant>({QVariant(id), QVariant(parentId), QVariant(0), QVariant("Comment")});
 
                 if (parentId) {
                     // Find parent
@@ -192,6 +208,10 @@ void TaskTreeModel::setModelData(QFile *file) {
         }
     }
 
+//    QVector<QVariant> newTask;
+//    newTask << QList<QVariant>({QVariant(99), QVariant(99), QVariant(98)});
+//    rootItem->appendChild(new TaskTreeItem(newTask, rootItem));
+//
     if (xmlReader.hasError()) {
         qDebug() << "Error read file:" << xmlReader.errorString();
     }
@@ -202,7 +222,23 @@ void TaskTreeModel::setModelData(QFile *file) {
 
 bool TaskTreeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
     if (role == Qt::EditRole) {
-        qDebug() << "Set data:" << index << "Value:" << value;
-        return QAbstractItemModel::setData(index, value, role);
+        auto *pItem = static_cast<TaskTreeItem *>(index.internalPointer());
+        QVariant &column = const_cast<QVariant &>(pItem->getItemData().at(index.column()));
+        column.setValue(value);
+        return true;
     }
+
+    return {};
+}
+
+void TaskTreeModel::addTask() {
+    qDebug() << ">>>>>>>>:" << rootItem->columnCount();
+
+    QVector<QVariant> newTask;
+    newTask << QList<QVariant>({QVariant(99), QVariant(99), QVariant(98)});
+    rootItem->appendChild(new TaskTreeItem(newTask, rootItem));
+
+
+//    rootItem->child()
+    qDebug() << ">>>>>>>>:" << rootItem->row();
 }

@@ -7,6 +7,11 @@
 
 #include <QVariant>
 
+#define ID_INDEX 0
+#define PARENT_ID_INDEX 1
+#define DEPTH_INDEX 2
+#define COMMENTS_INDEX 3
+
 class TaskTreeItem {
 public:
     explicit TaskTreeItem(const QVector<QVariant> &data, TaskTreeItem *parentItem = nullptr);
@@ -27,6 +32,11 @@ public:
 
     [[nodiscard]] int row() const;
 
+    [[maybe_unused]] [[nodiscard]] QString toString() const;
+
+    [[nodiscard]] int getId() const;
+
+    QVector<QVariant> getItemData();
 private:
     QVector<TaskTreeItem *> _childItems;
     QVector<QVariant> _itemData;

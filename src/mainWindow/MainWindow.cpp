@@ -14,9 +14,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setMenuBar(createMenuBar());
-    auto *toolBar = new QToolBar();
-    toolBar->addAction(QPixmap(":images/file-open-20.png"), "Open Tasklist (Ctrl+O)", this, SLOT(onOpenFileClicked()));
-    addToolBar(toolBar);
+    addToolBar(createToolBar());
 
     _treeView->setHeaderHidden(false);
 #pragma clang diagnostic push
@@ -46,6 +44,21 @@ void MainWindow::onOpenFileClicked() {
     loadModelFromByFilePath(filePath);
 }
 
+void MainWindow::addTaskAction() {
+    qDebug() << "Add task:";
+//    _treeView->model()->setData(QModelIndex(0,0));
+//    _model->addTask();
+//    _treeView->update();
+//    _treeView->repaint();
+
+//    setModel(_model);
+
+
+//    QVector<QVariant> newTask;
+//    newTask << QList<QVariant>({QVariant(99), QVariant(99), QVariant(98)});
+//    rootItem->appendChild(new TaskTreeItem(newTask, rootItem));
+}
+
 void MainWindow::loadModelFromByFilePath(const QString &filePath) {
     if (filePath.isEmpty()) {
         return;
@@ -58,9 +71,9 @@ void MainWindow::loadModelFromByFilePath(const QString &filePath) {
         return;
     }
 
-    auto *model = new TaskTreeModel();
-    model->setModelData(&file);
-    setModel(model);
+
+    _model->setModelData(&file);
+    setModel(_model);
 
     file.close();
 }
@@ -84,4 +97,13 @@ QMenuBar *MainWindow::createMenuBar() {
     menuBar->addMenu(helpMenu);
 
     return menuBar;
+}
+
+QToolBar *MainWindow::createToolBar() {
+    auto *toolBar = new QToolBar();
+    toolBar->addAction(QPixmap(":images/file-open-20.png"), "Open Tasklist (Ctrl+O)", this, SLOT(onOpenFileClicked()));
+    toolBar->addSeparator();
+    toolBar->addAction(QPixmap(":images/task-add-20.png"), "New task", this, SLOT(addTaskAction()));
+    addToolBar(toolBar);
+    return toolBar;
 }
