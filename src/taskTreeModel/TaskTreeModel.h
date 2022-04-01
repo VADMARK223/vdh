@@ -38,6 +38,9 @@ public:
     void setModelData(QFile *file);
 
     void addTask();
+
+    TaskTreeItem *getRootItem();
+
 protected:
 
     TaskTreeItem *rootItem;

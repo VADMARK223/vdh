@@ -36,7 +36,10 @@ public:
 
     [[nodiscard]] int getId() const;
 
+    [[nodiscard]] int getParentId() const;
+
     QVector<QVariant> getItemData();
+
 private:
     QVector<TaskTreeItem *> _childItems;
     QVector<QVariant> _itemData;

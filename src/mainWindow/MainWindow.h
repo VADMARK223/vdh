@@ -23,6 +23,8 @@ public slots:
 
     void onOpenFileClicked();
 
+    void onSaveFileAs();
+
     void loadModelFromByFilePath(const QString &qString);
 
     void addTaskAction();
@@ -34,6 +36,9 @@ private:
     QMenuBar *createMenuBar();
 
     QToolBar *createToolBar();
+
+//    void writeElement(TaskTreeItem *pItem);
+    void writeElement(QXmlStreamWriter &writer, TaskTreeItem *root);
 };
 
 #endif //VDH_MAINWINDOW_H

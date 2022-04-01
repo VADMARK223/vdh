@@ -62,6 +62,10 @@ int TaskTreeItem::getId() const {
     return this->data(ID_INDEX).toInt();
 }
 
+int TaskTreeItem::getParentId() const {
+    return this->data(PARENT_ID_INDEX).toInt();
+}
+
 QVector<QVariant> TaskTreeItem::getItemData() {
     return _itemData;
 }

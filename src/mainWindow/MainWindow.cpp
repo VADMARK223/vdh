@@ -44,19 +44,49 @@ void MainWindow::onOpenFileClicked() {
     loadModelFromByFilePath(filePath);
 }
 
+
+/*void MainWindow::test(TaskTreeItem *root) {
+    qDebug() << "root->childCount():" << root->childCount();
+    for (int i = 0; i < root->childCount(); ++i) {
+        TaskTreeItem *child = root->child(i);
+        qDebug() << "child:" << child->toString() << " children:" << child->childCount();
+        if (child->childCount()) {
+            writeElement(child);
+        }
+    }
+}*/
+
+void MainWindow::onSaveFileAs() {
+    QString filter = "Tasklist (*.xml)";
+    QString filePath = QFileDialog::getSaveFileName(this, "Save Tasklist As", QDir::homePath(), filter);
+
+    if (filePath.isEmpty()) {
+        return;
+    }
+
+    QFile qFile(filePath);
+    if (!qFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
+        qFile.close();
+        return;
+    }
+
+    QXmlStreamWriter writer;
+    writer.setDevice(&qFile);
+    writer.setAutoFormatting(true);
+    writer.writeStartDocument();
+    writer.writeStartElement("TODOLIST");
+    writeElement(writer, _model->getRootItem());
+    writer.writeEndDocument();
+    qFile.close();
+}
+
 void MainWindow::addTaskAction() {
     qDebug() << "Add task:";
-//    _treeView->model()->setData(QModelIndex(0,0));
-//    _model->addTask();
-//    _treeView->update();
-//    _treeView->repaint();
-
-//    setModel(_model);
-
-
-//    QVector<QVariant> newTask;
-//    newTask << QList<QVariant>({QVariant(99), QVariant(99), QVariant(98)});
-//    rootItem->appendChild(new TaskTreeItem(newTask, rootItem));
+    QVector<QVariant> newTask;
+    newTask << QList<QVariant>({QVariant(99), QVariant(99), QVariant(98)});
+    _model->getRootItem()->appendChild(new TaskTreeItem(newTask, _model->getRootItem()));
+    _treeView->repaint();
 }
 
 void MainWindow::loadModelFromByFilePath(const QString &filePath) {
@@ -87,6 +117,7 @@ QMenuBar *MainWindow::createMenuBar() {
 
     auto *fileMenu = new QMenu("&File");
     fileMenu->addAction("&Open Tasklist...", this, SLOT(onOpenFileClicked()), tr("Ctrl+O"));
+    fileMenu->addAction("Save Tasklist &As...", this, SLOT(onSaveFileAs()));
     fileMenu->addSeparator();
     fileMenu->addAction("E&xit", this, SLOT(close()), tr("Alt+F4"));
 
@@ -102,8 +133,26 @@ QMenuBar *MainWindow::createMenuBar() {
 QToolBar *MainWindow::createToolBar() {
     auto *toolBar = new QToolBar();
     toolBar->addAction(QPixmap(":images/file-open-20.png"), "Open Tasklist (Ctrl+O)", this, SLOT(onOpenFileClicked()));
+    toolBar->addAction(QPixmap(":images/tasklist-save-20.png"), "Save Tasklist", this, SLOT(addTaskAction()));
     toolBar->addSeparator();
     toolBar->addAction(QPixmap(":images/task-add-20.png"), "New task", this, SLOT(addTaskAction()));
+    toolBar->addSeparator();
+    toolBar->addAction(QPixmap(":images/settings.png"), "Preference", this, SLOT(addTaskAction()));
     addToolBar(toolBar);
     return toolBar;
+}
+
+void MainWindow::writeElement(QXmlStreamWriter &writer, TaskTreeItem *root) {
+    for (int i = 0; i < root->childCount(); ++i) {
+        TaskTreeItem *child = root->child(i);
+        writer.writeStartElement("TASK");
+        writer.writeAttribute("ID", QString::number(child->getId()));
+        writer.writeAttribute("P", QString::number(child->getParentId()));
+
+        if (child->childCount()) {
+            writeElement(writer, child);
+        }
+
+        writer.writeEndElement();
+    }
 }

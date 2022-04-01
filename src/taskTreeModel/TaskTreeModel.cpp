@@ -242,3 +242,7 @@ void TaskTreeModel::addTask() {
 //    rootItem->child()
     qDebug() << ">>>>>>>>:" << rootItem->row();
 }
+
+TaskTreeItem *TaskTreeModel::getRootItem() {
+    return rootItem;
+}
