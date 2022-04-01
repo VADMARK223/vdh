@@ -21,6 +21,8 @@ public:
 
 public slots:
 
+    void newFileAction();
+
     void onOpenFileClicked();
 
     void onSaveFileAs();
@@ -28,6 +30,14 @@ public slots:
     void loadModelFromByFilePath(const QString &qString);
 
     void addTaskAction();
+
+    void addSubTaskAction();
+
+    void treeViewSelectionChange(const QItemSelection &selected, const QItemSelection &deselected);
+
+    void preferenceAction();
+
+    void saveAction();
 
 private:
     QTreeView *_treeView = new QTreeView();

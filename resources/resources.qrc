@@ -7,5 +7,7 @@
         <file>images/tasklist-save-20.png</file>
         <file>images/settings.png</file>
         <file>images/ava.png</file>
+        <file>images/sub-task-add.png</file>
+        <file>images/tasklist-new.png</file>
     </qresource>
 </RCC>

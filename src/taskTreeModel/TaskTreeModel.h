@@ -15,6 +15,7 @@
 
 class TaskTreeModel : public QAbstractItemModel {
 public:
+    int nextUniqueId = 1000;
     explicit TaskTreeModel(QObject *parent = nullptr);
 
     ~TaskTreeModel() override;
@@ -37,9 +38,11 @@ public:
 
     void setModelData(QFile *file);
 
-    void addTask();
+    bool insertRow(int row, const QModelIndex &parent = QModelIndex());
 
     TaskTreeItem *getRootItem();
+
+    void insertSubtask(int row, const QModelIndex &parent = QModelIndex());
 
 protected:
 

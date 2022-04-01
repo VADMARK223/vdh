@@ -40,8 +40,8 @@ public:
 
     QVector<QVariant> getItemData();
 
-private:
     QVector<TaskTreeItem *> _childItems;
+private:
     QVector<QVariant> _itemData;
     TaskTreeItem *_parentItem;
 };
