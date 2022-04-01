@@ -41,10 +41,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     setCentralWidget(splitter);
 
+
     connect(_treeView->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
             this,
-            SLOT(treeViewSelectionChange(QItemSelection, QItemSelection)));
+            SLOT(onSelectionChanged(QItemSelection, QItemSelection)));
+
+    connect(_treeView->selectionModel(),
+            SIGNAL(currentChanged(QModelIndex, QModelIndex)),
+            this,
+            SLOT(onCurrentChanged(QModelIndex, QModelIndex)));
 }
 
 void MainWindow::newFileAction() {
@@ -107,6 +113,12 @@ void MainWindow::addTaskAction() {
 void MainWindow::addSubTaskAction() {
     qDebug() << "Add sub task action.";
     const QModelIndexList &selectedIndexesList = _treeView->selectionModel()->selectedIndexes();
+
+
+    const QModelIndex &currentIndex = _treeView->selectionModel()->currentIndex();
+    qDebug() << "Current index:" << currentIndex;
+
+
     qDebug() << "Selected indexes:" << selectedIndexesList;
     if (selectedIndexesList.isEmpty()) {
         qDebug() << "Add in end.";
@@ -189,7 +201,10 @@ void MainWindow::writeElement(QXmlStreamWriter &writer, TaskTreeItem *root) {
     }
 }
 
-void MainWindow::treeViewSelectionChange(const QItemSelection &selected, const QItemSelection &deselected) {
-    qDebug() << "Selection change:" << selected;
+void MainWindow::onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
+    qDebug() << "Selection change selected:" << selected << "deselected:" << deselected;
+}
 
+void MainWindow::onCurrentChanged(const QModelIndex &current, const QModelIndex &previous) {
+    qDebug() << "Current change:" << current;
 }

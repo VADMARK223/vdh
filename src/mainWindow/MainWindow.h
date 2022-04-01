@@ -33,7 +33,9 @@ public slots:
 
     void addSubTaskAction();
 
-    void treeViewSelectionChange(const QItemSelection &selected, const QItemSelection &deselected);
+    void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+
+    void onCurrentChanged(const QModelIndex &current, const QModelIndex &previou);
 
     void preferenceAction();
 
