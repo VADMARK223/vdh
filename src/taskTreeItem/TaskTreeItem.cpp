@@ -69,3 +69,23 @@ int TaskTreeItem::getParentId() const {
 QVector<QVariant> TaskTreeItem::getItemData() {
     return _itemData;
 }
+
+QModelIndex TaskTreeItem::index(int row, int column, const QModelIndex &parent) const {
+    return QModelIndex();
+}
+
+QModelIndex TaskTreeItem::parent(const QModelIndex &child) const {
+    return QModelIndex();
+}
+
+int TaskTreeItem::rowCount(const QModelIndex &parent) const {
+    return 0;
+}
+
+int TaskTreeItem::columnCount(const QModelIndex &parent) const {
+    return 0;
+}
+
+QVariant TaskTreeItem::data(const QModelIndex &index, int role) const {
+    return QVariant();
+}
