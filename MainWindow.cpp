@@ -12,10 +12,18 @@
 #include <QDir>
 #include <QToolBar>
 #include <QPushButton>
+#include <QStatusBar>
+#include <QProgressBar>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setMenuBar(createMenuBar());
     addToolBar(createToolBar());
+    auto *statusBar = new QStatusBar;
+    statusBar->showMessage("Choose a task."/*, 1000*/);
+    auto *progressBar = new QProgressBar;
+    progressBar->setValue(4);
+    statusBar->addPermanentWidget(progressBar);
+    setStatusBar(statusBar);
 
     _treeView->setHeaderHidden(false);
     _treeView->setSelectionMode(QAbstractItemView::SingleSelection);
