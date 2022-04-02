@@ -17,8 +17,6 @@ Q_OBJECT
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
-    void setModel(TaskTreeModel *pModel);
-
 public slots:
 
     void newFileAction();

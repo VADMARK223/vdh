@@ -182,14 +182,13 @@ void MainWindow::loadModelFromByFilePath(const QString &filePath) {
         return;
     }
 
+    delete _model;
+    _model = new TaskTreeModel();
     _model->setModelData(&file);
-    setModel(_model);
+    _treeView->setModel(_model);
+    _treeView->expandAll();
 
     file.close();
-}
-
-void MainWindow::setModel(TaskTreeModel *pModel) {
-    _treeView->setModel(pModel);
 }
 
 QMenuBar *MainWindow::createMenuBar() {

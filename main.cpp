@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     settings.endGroup();
 
     MainWindow mainWindow;
-    mainWindow.setMinimumSize(1000, 300);
+    mainWindow.setMinimumSize(1000, 500);
     if (x > 0 && y > 0 && width > 0 && height > 0) {
         mainWindow.setGeometry(x, y, width, height);
     }

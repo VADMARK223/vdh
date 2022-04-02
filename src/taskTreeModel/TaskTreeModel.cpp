@@ -285,16 +285,11 @@ void TaskTreeModel::insertTask(int row, bool isSubTask, const QModelIndex &paren
 //        rootItem->_childItems.insert(row + 1, new TaskTreeItem(newTask, rootItem));
 //        rootItem->appendChild(new TaskTreeItem(newTask, pTreeItem));
 
-
         TaskTreeItem *parentItem = pTreeItem->parentItem();
-
         TaskTreeItem *parentParentItem = parentItem->parentItem();
-
         if (parentParentItem == nullptr) {
-            qDebug() << "1:";
             rootItem->appendChild(new TaskTreeItem(newTask, rootItem));
         } else {
-            qDebug() << "2:";
             parentItem->appendChild(new TaskTreeItem(newTask, parentItem));
         }
     }
