@@ -275,7 +275,9 @@ bool TaskTreeModel::insertRow(int row, const QModelIndex &parent) {
 }
 
 void TaskTreeModel::insertTask(int row, bool isSubTask, const QModelIndex &parent) {
-    beginInsertRows(QModelIndex(), 0, 0);
+
+    beginInsertRows(parent, 0, 0);
+
     auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
     QVector<QVariant> newTask;
     newTask << QList<QVariant>({QVariant(nextUniqueId++), QVariant(0), QVariant(0), QVariant("New comment")});
