@@ -244,38 +244,8 @@ TaskTreeItem *TaskTreeModel::getRootItem() {
     return rootItem;
 }
 
-bool TaskTreeModel::insertRow(int row, const QModelIndex &parent) {
-    qDebug() << "Insert row:" << row << parent;
-//    beginInsertRows(parent, 0, 0);
-    beginInsertRows(QModelIndex(), 0, 0);
-
-    QVector<QVariant> newTask;
-    QString comment = "New comment";
-    newTask << QList<QVariant>({QVariant(nextUniqueId++), QVariant(0), QVariant(0), QVariant(comment)});
-    if (parent.internalPointer() == nullptr) {
-//    TaskTreeItem *pItem = getRootItem()->child(0);
-//        TaskTreeItem *pItem = getRootItem();
-//        rootItem->appendChild(new TaskTreeItem(newTask, rootItem));
-        rootItem->appendChild(new TaskTreeItem(newTask, rootItem));
-    } else {
-        rootItem->_childItems.insert(row + 1, new TaskTreeItem(newTask, rootItem));
-//        auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
-//        pTreeItem->_childItems.insert(row + 1, new TaskTreeItem(newTask, pTreeItem));
-
-//        auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
-//        qDebug() << "Parent item:" << pTreeItem->toString();
-//        QVector<QVariant> newTask;
-//        newTask << QList<QVariant>({QVariant(99), QVariant(99), QVariant(98), QVariant("Comment99")});
-//        rootItem->_childItems.insert(row, new TaskTreeItem(newTask, rootItem));
-//        pTreeItem->appendChild(new TaskTreeItem(newTask, pTreeItem));
-    }
-
-    endInsertRows();
-    return true;
-}
-
 void TaskTreeModel::insertTask(int row, bool isSubTask, const QModelIndex &parent) {
-
+    qDebug() << "row:" << row << "parent:" << parent;
     beginInsertRows(parent, 0, 0);
 
     auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
@@ -288,31 +258,7 @@ void TaskTreeModel::insertTask(int row, bool isSubTask, const QModelIndex &paren
 //        rootItem->appendChild(new TaskTreeItem(newTask, pTreeItem));
 
         TaskTreeItem *parentItem = pTreeItem->parentItem();
-        TaskTreeItem *parentParentItem = parentItem->parentItem();
-        if (parentParentItem == nullptr) {
-            rootItem->appendChild(new TaskTreeItem(newTask, rootItem));
-        } else {
-            parentItem->appendChild(new TaskTreeItem(newTask, parentItem));
-        }
-    }
-
-    endInsertRows();
-}
-
-void TaskTreeModel::insertSubtask(int row, const QModelIndex &parent) {
-    qDebug() << "Insert row:" << row << parent;
-//    beginInsertRows(parent, 0, 0);
-    beginInsertRows(QModelIndex(), 0, 0);
-
-    QVector<QVariant> newTask;
-    QString comment = "New comment";
-    newTask << QList<QVariant>({QVariant(nextUniqueId++), QVariant(0), QVariant(0), QVariant(comment)});
-    if (parent.internalPointer() == nullptr) {
-        rootItem->appendChild(new TaskTreeItem(newTask, rootItem));
-    } else {
-        auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
-        qDebug() << "Parent item:" << pTreeItem->toString();
-        pTreeItem->appendChild(new TaskTreeItem(newTask, pTreeItem));
+        parentItem->appendChild(new TaskTreeItem(newTask, parentItem));
     }
 
     endInsertRows();

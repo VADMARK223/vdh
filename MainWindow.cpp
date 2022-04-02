@@ -121,64 +121,9 @@ void MainWindow::addTaskAction(bool isSubtask) {
         return;
     }
     const QModelIndexList &selectedIndexesList = _treeView->selectionModel()->selectedIndexes();
-
-    if (isSubtask) {
-        auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
-        _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
-    } else {
-        auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
-        _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
-        /*const QModelIndex &selectedIndex = selectedIndexesList.first();
-        TaskTreeItem *pItem = _model->getRootItem();
-        qDebug() << "pItem:" << pItem;
-        qDebug() << "selected Index:" << selectedIndex;
-
-        const QModelIndex &resultIndex = _model->index(0, 0, QModelIndex());
-        qDebug() << "resultIndex:" << resultIndex;
-        _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);*/
-    }
-
-
-
-//    if (isSubtask) {
-//        const QModelIndex &currentIndex = _treeView->selectionModel()->currentIndex();
-//        qDebug() << "Current index:" << currentIndex;
-//
-//        bool isCurrentIndexSelected = _treeView->selectionModel()->isSelected(currentIndex);
-//        qDebug() << "Is current index selected:" << isCurrentIndexSelected;
-//
-//        const QItemSelection &selection = _treeView->selectionModel()->selection();
-//        qDebug() << "Selection:" << selection;
-//
-
-//        qDebug() << "Has selection:" << hasSelection;
-//
-//        if (selectedIndexesList.isEmpty()) {
-//            _model->insertSubtask(0);
-//        } else {
-//            auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
-//            _model->insertSubtask(selectedIndex.row(), selectedIndex);
-//        }
-//    } else {
-//        if (selectedIndexesList.isEmpty()) {
-//            _model->insertRow(0);
-//        } else {
-//            auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
-//            _model->insertRow(selectedIndex.row(), selectedIndex);
-//        }
+    auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
+    _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
 }
-
-
-//void MainWindow::addSubTaskAction() {
-//    const QModelIndex &index = _treeView->currentIndex().sibling(1,1);
-//    qDebug() << "index:" << index;
-//    _treeView->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
-
-
-//    const QModelIndex &modelIndex = _model->index(0,0, nullptr);//QModelIndex(0,0,);
-//    qDebug() << "modelIndex:" << modelIndex;
-//    _treeView->selectionModel()->select(modelIndex, QItemSelectionModel::ClearAndSelect);
-//}
 
 void MainWindow::loadModelFromByFilePath(const QString &filePath) {
     if (filePath.isEmpty()) {
