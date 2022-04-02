@@ -31,7 +31,12 @@ public slots:
 
     void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 
-    void onCurrentChanged(const QModelIndex &current, const QModelIndex &previou);
+    void onCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
+
+    void onDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
+                       const QList<int> &roles = QList<int>());
+
+    void onRowsInserted(const QModelIndex &parent, int first, int last);
 
     void preferenceAction();
 

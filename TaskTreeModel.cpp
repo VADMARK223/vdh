@@ -245,7 +245,7 @@ TaskTreeItem *TaskTreeModel::getRootItem() {
 }
 
 void TaskTreeModel::insertTask(int row, bool isSubTask, const QModelIndex &parent) {
-    qDebug() << "row:" << row << "parent:" << parent;
+//    qDebug() << "row:" << row << "parent:" << parent;
     beginInsertRows(parent, 0, 0);
 
     auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
