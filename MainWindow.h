@@ -5,7 +5,7 @@
 #ifndef VDH_MAINWINDOW_H
 #define VDH_MAINWINDOW_H
 
-#include "../taskTreeModel/TaskTreeModel.h"
+#include "TaskTreeModel.h"
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QTreeView>

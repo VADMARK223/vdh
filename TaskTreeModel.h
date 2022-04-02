@@ -11,7 +11,7 @@
 #include <QStandardItemModel>
 #include <QFile>
 
-#include "../taskTreeItem/TaskTreeItem.h"
+#include "TaskTreeItem.h"
 
 class TaskTreeModel : public QAbstractItemModel {
 public:
