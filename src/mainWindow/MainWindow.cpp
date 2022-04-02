@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QToolBar>
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setMenuBar(createMenuBar());
@@ -19,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     _treeView->setHeaderHidden(false);
     _treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     _treeView->setSortingEnabled(false);
+    _treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
 
 #pragma clang diagnostic push
@@ -33,14 +35,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     auto *label = new QLabel;
     label->setPixmap(pixmap);
 
+    auto *closeButton = new QPushButton("Close");
+
     auto *splitter = new QSplitter;
     splitter->addWidget(_treeView);
     splitter->addWidget(label);
-    splitter->setSizes(QList<int>({200, 100}));
+    splitter->addWidget(closeButton);
+//    splitter->setSizes(QList<int>({200, 100}));
     splitter->show();
 
     setCentralWidget(splitter);
-
 
     connect(_treeView->selectionModel(),
             SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
@@ -51,6 +55,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             SIGNAL(currentChanged(QModelIndex, QModelIndex)),
             this,
             SLOT(onCurrentChanged(QModelIndex, QModelIndex)));
+
+
+    connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
 }
 
 void MainWindow::newFileAction() {
@@ -97,37 +104,71 @@ void MainWindow::onSaveFileAs() {
     qFile.close();
 }
 
-void MainWindow::addTaskAction() {
-    qDebug() << "Add task action.";
-    const QModelIndexList &selectedIndexesList = _treeView->selectionModel()->selectedIndexes();
-    qDebug() << "Selected indexes:" << selectedIndexesList;
-    if (selectedIndexesList.isEmpty()) {
-        qDebug() << "Add in end.";
-        _model->insertRow(0);
-    } else {
-        auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
-        _model->insertRow(selectedIndex.row(), selectedIndex);
+void MainWindow::addTaskAction(bool isSubtask) {
+    bool hasSelection = _treeView->selectionModel()->hasSelection();
+    if (!hasSelection) {
+        QMessageBox::information(this, "Info", "Please select task.", QMessageBox::Ok);
+        return;
     }
-}
-
-void MainWindow::addSubTaskAction() {
-    qDebug() << "Add sub task action.";
     const QModelIndexList &selectedIndexesList = _treeView->selectionModel()->selectedIndexes();
 
-
-    const QModelIndex &currentIndex = _treeView->selectionModel()->currentIndex();
-    qDebug() << "Current index:" << currentIndex;
-
-
-    qDebug() << "Selected indexes:" << selectedIndexesList;
-    if (selectedIndexesList.isEmpty()) {
-        qDebug() << "Add in end.";
-        _model->insertSubtask(0);
+    if (isSubtask) {
+        auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
+        _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
     } else {
         auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
-        _model->insertSubtask(selectedIndex.row(), selectedIndex);
+        _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
+        /*const QModelIndex &selectedIndex = selectedIndexesList.first();
+        TaskTreeItem *pItem = _model->getRootItem();
+        qDebug() << "pItem:" << pItem;
+        qDebug() << "selected Index:" << selectedIndex;
+
+        const QModelIndex &resultIndex = _model->index(0, 0, QModelIndex());
+        qDebug() << "resultIndex:" << resultIndex;
+        _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);*/
     }
+
+
+
+//    if (isSubtask) {
+//        const QModelIndex &currentIndex = _treeView->selectionModel()->currentIndex();
+//        qDebug() << "Current index:" << currentIndex;
+//
+//        bool isCurrentIndexSelected = _treeView->selectionModel()->isSelected(currentIndex);
+//        qDebug() << "Is current index selected:" << isCurrentIndexSelected;
+//
+//        const QItemSelection &selection = _treeView->selectionModel()->selection();
+//        qDebug() << "Selection:" << selection;
+//
+
+//        qDebug() << "Has selection:" << hasSelection;
+//
+//        if (selectedIndexesList.isEmpty()) {
+//            _model->insertSubtask(0);
+//        } else {
+//            auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
+//            _model->insertSubtask(selectedIndex.row(), selectedIndex);
+//        }
+//    } else {
+//        if (selectedIndexesList.isEmpty()) {
+//            _model->insertRow(0);
+//        } else {
+//            auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
+//            _model->insertRow(selectedIndex.row(), selectedIndex);
+//        }
 }
+
+
+//void MainWindow::addSubTaskAction() {
+//    const QModelIndex &index = _treeView->currentIndex().sibling(1,1);
+//    qDebug() << "index:" << index;
+//    _treeView->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+
+
+//    const QModelIndex &modelIndex = _model->index(0,0, nullptr);//QModelIndex(0,0,);
+//    qDebug() << "modelIndex:" << modelIndex;
+//    _treeView->selectionModel()->select(modelIndex, QItemSelectionModel::ClearAndSelect);
+//}
 
 void MainWindow::loadModelFromByFilePath(const QString &filePath) {
     if (filePath.isEmpty()) {
@@ -140,7 +181,6 @@ void MainWindow::loadModelFromByFilePath(const QString &filePath) {
         file.close();
         return;
     }
-
 
     _model->setModelData(&file);
     setModel(_model);
@@ -177,8 +217,11 @@ QToolBar *MainWindow::createToolBar() {
     toolBar->addAction(QPixmap(":images/file-open-20.png"), "Open Tasklist (Ctrl+O)", this, SLOT(onOpenFileClicked()));
     toolBar->addAction(QPixmap(":images/tasklist-save-20.png"), "Save Tasklist", this, SLOT(saveAction()));
     toolBar->addSeparator();
-    toolBar->addAction(QPixmap(":images/task-add-20.png"), "New Task", this, SLOT(addTaskAction()));
-    toolBar->addAction(QPixmap(":images/sub-task-add.png"), "New Subtask", this, SLOT(addSubTaskAction()));
+    toolBar->addAction(QPixmap(":images/task-add-20.png"), "New Task", this, [this] { addTaskAction(false); });
+//    QAction *pAction = toolBar->addAction(QPixmap(":images/task-add-20.png"), "New Task");
+//    connect(pAction, &QAction::triggered, this, [this] { addTaskAction(); });
+
+    toolBar->addAction(QPixmap(":images/sub-task-add.png"), "New Subtask", this, [this] { addTaskAction(true); });
     toolBar->addSeparator();
     toolBar->addAction(QPixmap(":images/tasklist-new.png"), "New Tasklist", this, SLOT(newFileAction()));
     toolBar->addAction(QPixmap(":images/settings.png"), "Preference", this, SLOT(preferenceAction()));
@@ -202,9 +245,9 @@ void MainWindow::writeElement(QXmlStreamWriter &writer, TaskTreeItem *root) {
 }
 
 void MainWindow::onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
-    qDebug() << "Selection change selected:" << selected << "deselected:" << deselected;
+//    qDebug() << "Selection change selected:" << selected << "deselected:" << deselected;
 }
 
 void MainWindow::onCurrentChanged(const QModelIndex &current, const QModelIndex &previous) {
-    qDebug() << "Current change:" << current;
+//    qDebug() << "Current change:" << current;
 }

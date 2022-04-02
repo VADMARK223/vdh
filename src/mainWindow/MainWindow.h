@@ -29,9 +29,7 @@ public slots:
 
     void loadModelFromByFilePath(const QString &qString);
 
-    void addTaskAction();
-
-    void addSubTaskAction();
+    void addTaskAction(bool isSubtask);
 
     void onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
 

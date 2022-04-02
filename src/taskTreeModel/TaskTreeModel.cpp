@@ -138,7 +138,7 @@ int TaskTreeModel::rowCount(const QModelIndex &parent) const {
 }
 
 void TaskTreeModel::setModelData(QFile *file) {
-    QVector < TaskTreeItem * > parents;
+    QVector<TaskTreeItem *> parents;
     parents << rootItem;
 
     QXmlStreamReader xmlReader;
@@ -146,7 +146,7 @@ void TaskTreeModel::setModelData(QFile *file) {
 
 //            xmlReader.raiseError(QObject::tr("Incorrect file."));
 
-    QVector <QVector<QVariant>> dataList;
+    QVector<QVector<QVariant>> dataList;
     bool rootItemInit = false;
 
     while (!xmlReader.atEnd()) {
@@ -159,19 +159,18 @@ void TaskTreeModel::setModelData(QFile *file) {
         if (token == QXmlStreamReader::StartElement) {
             if (xmlReader.name() == tr("TODOLIST")) {
                 nextUniqueId = xmlReader.attributes().value("NEXTUNIQUEID").toInt();
-                qDebug() << "TODOLIST:" << nextUniqueId;
             }
 
             if (xmlReader.name() == tr("TASK")) {
                 int id = xmlReader.attributes().value("ID").toInt();
                 int parentId = xmlReader.attributes().value("P").toInt();
-                QVector <QVariant> newData;
+                QVector<QVariant> newData;
                 newData << QList<QVariant>({QVariant(id), QVariant(parentId), QVariant(0), QVariant("Comment")});
 
                 if (parentId) {
                     // Find parent
                     for (const auto &i: dataList) {
-                        auto &data = const_cast<QVector <QVariant> &>(i);
+                        auto &data = const_cast<QVector<QVariant> &>(i);
                         int currentId = data.at(ID_INDEX).value<int>();
                         int parentDepth = data.at(DEPTH_INDEX).value<int>();
                         if (currentId == parentId) {
@@ -188,7 +187,7 @@ void TaskTreeModel::setModelData(QFile *file) {
     }
 
     for (const auto &i: dataList) {
-        auto &data = const_cast<QVector <QVariant> &>(i);
+        auto &data = const_cast<QVector<QVariant> &>(i);
 
         if (!rootItemInit) {
             rootItemInit = true;
@@ -273,6 +272,34 @@ bool TaskTreeModel::insertRow(int row, const QModelIndex &parent) {
 
     endInsertRows();
     return true;
+}
+
+void TaskTreeModel::insertTask(int row, bool isSubTask, const QModelIndex &parent) {
+    beginInsertRows(QModelIndex(), 0, 0);
+    auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
+    QVector<QVariant> newTask;
+    newTask << QList<QVariant>({QVariant(nextUniqueId++), QVariant(0), QVariant(0), QVariant("New comment")});
+    if (isSubTask) {
+        pTreeItem->appendChild(new TaskTreeItem(newTask, pTreeItem));
+    } else {
+//        rootItem->_childItems.insert(row + 1, new TaskTreeItem(newTask, rootItem));
+//        rootItem->appendChild(new TaskTreeItem(newTask, pTreeItem));
+
+
+        TaskTreeItem *parentItem = pTreeItem->parentItem();
+
+        TaskTreeItem *parentParentItem = parentItem->parentItem();
+
+        if (parentParentItem == nullptr) {
+            qDebug() << "1:";
+            rootItem->appendChild(new TaskTreeItem(newTask, rootItem));
+        } else {
+            qDebug() << "2:";
+            parentItem->appendChild(new TaskTreeItem(newTask, parentItem));
+        }
+    }
+
+    endInsertRows();
 }
 
 void TaskTreeModel::insertSubtask(int row, const QModelIndex &parent) {
