@@ -6,8 +6,8 @@
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
     QApplication::setWindowIcon(QIcon(":images/ava.png"));
-    QSettings settings("settings.ini", QSettings::IniFormat);
 
+    QSettings settings("settings.ini", QSettings::IniFormat);
     settings.beginGroup("MainWindowPosition");
     int x = settings.value("x", -1).toInt();
     int y = settings.value("y", -1).toInt();

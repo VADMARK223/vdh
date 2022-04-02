@@ -43,7 +43,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     splitter->addWidget(closeButton);
 //    splitter->setSizes(QList<int>({200, 100}));
     splitter->show();
-
+    _treeView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    closeButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setCentralWidget(splitter);
 
     connect(_treeView->selectionModel(),
@@ -202,10 +204,14 @@ QMenuBar *MainWindow::createMenuBar() {
     fileMenu->addSeparator();
     fileMenu->addAction("E&xit", this, SLOT(close()), tr("Alt+F4"));
 
+    auto *toolsMenu = new QMenu("&Tools");
+    toolsMenu->addAction("Preferences...");
+
     auto *helpMenu = new QMenu("&Help");
     helpMenu->addAction("&About vdh");
 
     menuBar->addMenu(fileMenu);
+    menuBar->addMenu(toolsMenu);
     menuBar->addMenu(helpMenu);
 
     return menuBar;
