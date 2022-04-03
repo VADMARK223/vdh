@@ -37,6 +37,7 @@ public slots:
                        const QList<int> &roles = QList<int>());
 
     void onRowsInserted(const QModelIndex &parent, int first, int last);
+    void onRowsAboutToBeInserted(const QModelIndex &parent, int first, int last);
 
     void preferenceAction();
 

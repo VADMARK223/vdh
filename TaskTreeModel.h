@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QStandardItemModel>
 #include <QFile>
+#include <QTreeView>
 
 #include "TaskTreeItem.h"
 

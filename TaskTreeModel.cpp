@@ -259,6 +259,8 @@ void TaskTreeModel::insertTask(int row, bool isSubTask, const QModelIndex &paren
 
         TaskTreeItem *parentItem = pTreeItem->parentItem();
         parentItem->appendChild(new TaskTreeItem(newTask, parentItem));
+
+//        tree->selectionModel()->select(parent, QItemSelectionModel::ClearAndSelect);
     }
 
     endInsertRows();

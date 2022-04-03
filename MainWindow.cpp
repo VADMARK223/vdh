@@ -14,8 +14,12 @@
 #include <QPushButton>
 #include <QStatusBar>
 #include <QProgressBar>
+#include <QAbstractItemModelTester>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+    auto *tester = new QAbstractItemModelTester(_model, QAbstractItemModelTester::FailureReportingMode::Fatal, this);
+
+
     setMenuBar(createMenuBar());
     addToolBar(createToolBar());
     auto *statusBar = new QStatusBar;
@@ -57,24 +61,29 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setCentralWidget(splitter);
 
     connect(_treeView->selectionModel(),
-            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
             this,
-            SLOT(onSelectionChanged(QItemSelection,QItemSelection)));
+            SLOT(onSelectionChanged(QItemSelection, QItemSelection)));
 
     connect(_treeView->selectionModel(),
-            SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+            SIGNAL(currentChanged(QModelIndex, QModelIndex)),
             this,
-            SLOT(onCurrentChanged(QModelIndex,QModelIndex)));
+            SLOT(onCurrentChanged(QModelIndex, QModelIndex)));
 
     connect(_treeView->model(),
-            SIGNAL(dataChanged(QModelIndex,QModelIndex,QList<int>)),
+            SIGNAL(dataChanged(QModelIndex, QModelIndex, QList<int>)),
             this,
-            SLOT(onDataChanged(QModelIndex,QModelIndex,QList<int>)));
+            SLOT(onDataChanged(QModelIndex, QModelIndex, QList<int>)));
 
     connect(_treeView->model(),
-            SIGNAL(rowsInserted(QModelIndex,int,int)),
+            SIGNAL(rowsInserted(QModelIndex, int, int)),
             this,
-            SLOT(onRowsInserted(QModelIndex,int,int)));
+            SLOT(onRowsInserted(QModelIndex, int, int)));
+
+    connect(_treeView->model(),
+            SIGNAL(rowsAboutToBeInserted(QModelIndex, int, int)),
+            this,
+            SLOT(onRowsAboutToBeInserted(QModelIndex, int, int)));
 
 
     connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
@@ -133,7 +142,7 @@ void MainWindow::addTaskAction(bool isSubtask) {
     const QModelIndexList &selectedIndexesList = _treeView->selectionModel()->selectedIndexes();
     auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
     _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
-    _treeView->reset();
+//    _treeView->reset();
 }
 
 void MainWindow::loadModelFromByFilePath(const QString &filePath) {
@@ -227,5 +236,11 @@ void MainWindow::onDataChanged(const QModelIndex &topLeft, const QModelIndex &bo
 }
 
 void MainWindow::onRowsInserted(const QModelIndex &parent, int first, int last) {
-    qDebug() << "onRowsInserted.";
+    auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
+//    qDebug() << "Insert pTreeItem:" << pTreeItem->toString();
+}
+
+void MainWindow::onRowsAboutToBeInserted(const QModelIndex &parent, int first, int last) {
+    auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
+    qDebug() << "Insert pTreeItem:" << pTreeItem->toString();
 }

@@ -12,6 +12,7 @@ find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
+        Test
         REQUIRED)
 
 add_executable(vdh WIN32 main.cpp resources/resources.qrc TaskTreeModel.cpp TaskTreeModel.h TaskTreeItem.cpp TaskTreeItem.h MainWindow.cpp MainWindow.h)
@@ -19,6 +20,7 @@ target_link_libraries(vdh
         Qt::Core
         Qt::Gui
         Qt::Widgets
+        Qt::Test
         )
 
 if (WIN32)
@@ -42,7 +44,7 @@ if (WIN32)
                 "${QT_INSTALL_PATH}/plugins/platforms/qwindows${DEBUG_SUFFIX}.dll"
                 "$<TARGET_FILE_DIR:${PROJECT_NAME}>/plugins/platforms/")
     endif ()
-    foreach (QT_LIB Core Gui Widgets)
+    foreach (QT_LIB Core Gui Widgets Test)
         add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy
                 "${QT_INSTALL_PATH}/bin/Qt6${QT_LIB}${DEBUG_SUFFIX}.dll"
