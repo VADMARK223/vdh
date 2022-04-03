@@ -41,7 +41,7 @@ public:
 
     TaskTreeItem *getRootItem();
 
-    void insertTask(int row, bool isSubTask, const QModelIndex &parent = QModelIndex());
+    TaskTreeItem *insertTask(int row, bool isSubTask, const QModelIndex &parent = QModelIndex());
 protected:
 
     TaskTreeItem *rootItem;

@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     _treeView->setHeaderHidden(false);
     _treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     _treeView->setSortingEnabled(false);
-    _treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
+//    _treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
 
 #pragma clang diagnostic push
@@ -141,8 +141,13 @@ void MainWindow::addTaskAction(bool isSubtask) {
     }
     const QModelIndexList &selectedIndexesList = _treeView->selectionModel()->selectedIndexes();
     auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
-    _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
-//    _treeView->reset();
+    TaskTreeItem *newTaskItem = _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
+
+    const QModelIndex &parent = isSubtask ? selectedIndex : QModelIndex();
+    const QModelIndex &index = _model->index(newTaskItem->row(), COMMENTS_INDEX, parent);
+    _treeView->reset();
+    _treeView->expandAll();
+    _treeView->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
 }
 
 void MainWindow::loadModelFromByFilePath(const QString &filePath) {
