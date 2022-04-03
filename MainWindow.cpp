@@ -144,10 +144,14 @@ void MainWindow::addTaskAction(bool isSubtask) {
     TaskTreeItem *newTaskItem = _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
 
     const QModelIndex &parent = isSubtask ? selectedIndex : QModelIndex();
-    const QModelIndex &index = _model->index(newTaskItem->row(), COMMENTS_INDEX, parent);
+    const QModelIndex &topLeft = _model->index(newTaskItem->row(), ID_INDEX, parent);
+    const QModelIndex &bottomRight = _model->index(newTaskItem->row(), COMMENTS_INDEX, parent);
     _treeView->reset();
     _treeView->expandAll();
-    _treeView->selectionModel()->select(index, QItemSelectionModel::ClearAndSelect);
+
+    QItemSelection selection = _treeView->selectionModel()->selection();
+    selection.select(topLeft, bottomRight);
+    _treeView->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
 }
 
 void MainWindow::loadModelFromByFilePath(const QString &filePath) {
