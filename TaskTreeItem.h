@@ -13,11 +13,11 @@
 #define DEPTH_INDEX 2
 #define COMMENTS_INDEX 3
 
-class TaskTreeItem : QAbstractItemModel {
+class TaskTreeItem {
 public:
     explicit TaskTreeItem(const QVector<QVariant> &data, TaskTreeItem *parentItem = nullptr);
 
-    ~TaskTreeItem() override;
+    ~TaskTreeItem();
 
     void appendChild(TaskTreeItem *item);
 
@@ -41,6 +41,7 @@ public:
 
     QVector<QVariant> getItemData();
 
+/*
 private:
     [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex &parent) const override;
 
@@ -51,6 +52,7 @@ private:
     [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
 
     [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;
+*/
 
 public:
 

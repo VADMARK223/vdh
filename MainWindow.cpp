@@ -141,7 +141,13 @@ void MainWindow::addTaskAction(bool isSubtask) {
     }
     const QModelIndexList &selectedIndexesList = _treeView->selectionModel()->selectedIndexes();
     auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
-    TaskTreeItem *newTaskItem = _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
+    if (isSubtask) {
+        TaskTreeItem *newTaskItem = _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
+    } else {
+        _model->insertRow(selectedIndex.row(), selectedIndex);
+    }
+
+    _treeView->expandAll();
 
     /*const QModelIndex &parent = isSubtask ? selectedIndex : QModelIndex();
     const QModelIndex &topLeft = _model->index(newTaskItem->row(), ID_INDEX, parent);
@@ -171,6 +177,14 @@ void MainWindow::loadModelFromByFilePath(const QString &filePath) {
     _model->setModelData(&file);
     _treeView->setModel(_model);
     _treeView->expandAll();
+
+    // Selected first row
+    const QModelIndex &parent = QModelIndex();
+    const QModelIndex &topLeft = _model->index(0, ID_INDEX, parent);
+    const QModelIndex &bottomRight = _model->index(0, COMMENTS_INDEX, parent);
+    QItemSelection selection = _treeView->selectionModel()->selection();
+    selection.select(topLeft, bottomRight);
+    _treeView->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
 
     file.close();
 }
@@ -251,5 +265,5 @@ void MainWindow::onRowsInserted(const QModelIndex &parent, int first, int last) 
 
 void MainWindow::onRowsAboutToBeInserted(const QModelIndex &parent, int first, int last) {
     auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
-    qDebug() << "Insert pTreeItem:" << pTreeItem->toString();
+//    qDebug() << "Insert pTreeItem:" << pTreeItem->toString();
 }

@@ -52,9 +52,14 @@ int TaskTreeItem::row() const {
 }
 
 [[maybe_unused]] QString TaskTreeItem::toString() const {
+    QString addressString;
+    QTextStream qTextStream(&addressString);
+    qTextStream << this;
+
     return "TaskTreeItem(" +
-           this->data(ID_INDEX).toString() + ", " +
-           this->data(DEPTH_INDEX).toString() +
+           this->data(ID_INDEX).toString() + "," +
+           this->data(DEPTH_INDEX).toString() + "," +
+            addressString +
            ")";
 }
 
@@ -69,7 +74,7 @@ int TaskTreeItem::getParentId() const {
 QVector<QVariant> TaskTreeItem::getItemData() {
     return _itemData;
 }
-
+/*
 QModelIndex TaskTreeItem::index(int row, int column, const QModelIndex &parent) const {
     return QModelIndex();
 }
@@ -88,4 +93,4 @@ int TaskTreeItem::columnCount(const QModelIndex &parent) const {
 
 QVariant TaskTreeItem::data(const QModelIndex &index, int role) const {
     return QVariant();
-}
+}*/

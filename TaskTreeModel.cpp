@@ -28,6 +28,7 @@ int TaskTreeModel::columnCount(const QModelIndex &parent) const {
 
 QVariant TaskTreeModel::data(const QModelIndex &index, int role) const {
     if (!index.isValid()) {
+        qDebug() << "Not valid:";
         return {};
     }
 
@@ -264,4 +265,56 @@ TaskTreeItem *TaskTreeModel::insertTask(int row, bool isSubTask, const QModelInd
     endInsertRows();
 
     return newTaskItem;
+}
+
+bool TaskTreeModel::insertRow(int row, const QModelIndex &parent) {
+
+    auto *itemForAttach = static_cast<TaskTreeItem *>(parent.internalPointer())->parentItem();
+    const QModelIndex &modelIndex = indexFromItem(itemForAttach);
+
+
+    QVector<QVariant> newTaskData;
+
+    newTaskData << QList<QVariant>({QVariant(++lastUniqueId), QVariant(0), QVariant(0),
+                                    QVariant("New task #" + QString::number(lastUniqueId))});
+
+    auto *newTaskItem = new TaskTreeItem(newTaskData, itemForAttach);
+
+    beginInsertRows(indexFromItem(itemForAttach), itemForAttach->childCount(), itemForAttach->childCount());
+    itemForAttach->appendChild(newTaskItem);
+    endInsertRows();
+
+    return true;
+}
+
+QModelIndex TaskTreeModel::indexFromItem(TaskTreeItem *item) {
+    if (item == nullptr) {
+        qDebug() << "Is null.";
+        return {};
+    }
+
+
+    if (item == rootItem) {
+        qDebug() << "Is root.";
+        return {};
+    }
+
+    qDebug() << "item:" << item->toString();
+    TaskTreeItem *parent = item->parentItem();
+    QList<TaskTreeItem *> parents;
+    while (parent && parent != rootItem) {
+        parents << parent;
+        parent = parent->parentItem();
+    }
+    qDebug() << "Parents size:" << parents.count();
+
+    QModelIndex ix;
+    parent = rootItem;
+
+    for (int i = 0; i < parents.count(); i++) {
+        ix = index(parents[i]->row(), 0, ix);
+    }
+    ix = index(ix.row(), 0, ix);
+
+    return ix;
 }
