@@ -15,6 +15,7 @@
 #include <QStatusBar>
 #include <QProgressBar>
 #include <QAbstractItemModelTester>
+#include <QThread>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     auto *tester = new QAbstractItemModelTester(_model, QAbstractItemModelTester::FailureReportingMode::Fatal, this);
@@ -141,13 +142,12 @@ void MainWindow::addTaskAction(bool isSubtask) {
     }
     const QModelIndexList &selectedIndexesList = _treeView->selectionModel()->selectedIndexes();
     auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
-    if (isSubtask) {
-        TaskTreeItem *newTaskItem = _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
-    } else {
-        _model->insertRow(selectedIndex.row(), selectedIndex);
-    }
+    _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
 
-    _treeView->expandAll();
+//    _treeView->expandAll();
+//    if (isSubtask) {
+//        _treeView->expand(selectedIndex);
+//    }
 
     /*const QModelIndex &parent = isSubtask ? selectedIndex : QModelIndex();
     const QModelIndex &topLeft = _model->index(newTaskItem->row(), ID_INDEX, parent);

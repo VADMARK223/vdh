@@ -248,8 +248,6 @@ TaskTreeItem *TaskTreeModel::getRootItem() {
 }
 
 TaskTreeItem *TaskTreeModel::insertTask(int row, bool isSubTask, const QModelIndex &parent) {
-    beginInsertRows(parent, 0, 0);
-
     auto *itemForAttach = static_cast<TaskTreeItem *>(parent.internalPointer());
     if (!isSubTask) {
         itemForAttach = itemForAttach->parentItem();
@@ -260,6 +258,13 @@ TaskTreeItem *TaskTreeModel::insertTask(int row, bool isSubTask, const QModelInd
     newTaskData << QList<QVariant>({QVariant(++lastUniqueId), QVariant(0), QVariant(0),
                                     QVariant("New task #" + QString::number(lastUniqueId))});
     auto *newTaskItem = new TaskTreeItem(newTaskData, itemForAttach);
+
+    if (isSubTask) {
+        beginInsertRows(parent, 0, 0);
+    } else {
+        beginInsertRows(indexFromItem(itemForAttach), itemForAttach->childCount(), itemForAttach->childCount());
+    }
+
     itemForAttach->appendChild(newTaskItem);
 
     endInsertRows();
@@ -267,49 +272,19 @@ TaskTreeItem *TaskTreeModel::insertTask(int row, bool isSubTask, const QModelInd
     return newTaskItem;
 }
 
-bool TaskTreeModel::insertRow(int row, const QModelIndex &parent) {
-
-    auto *itemForAttach = static_cast<TaskTreeItem *>(parent.internalPointer())->parentItem();
-    const QModelIndex &modelIndex = indexFromItem(itemForAttach);
-
-
-    QVector<QVariant> newTaskData;
-
-    newTaskData << QList<QVariant>({QVariant(++lastUniqueId), QVariant(0), QVariant(0),
-                                    QVariant("New task #" + QString::number(lastUniqueId))});
-
-    auto *newTaskItem = new TaskTreeItem(newTaskData, itemForAttach);
-
-    beginInsertRows(indexFromItem(itemForAttach), itemForAttach->childCount(), itemForAttach->childCount());
-    itemForAttach->appendChild(newTaskItem);
-    endInsertRows();
-
-    return true;
-}
-
 QModelIndex TaskTreeModel::indexFromItem(TaskTreeItem *item) {
-    if (item == nullptr) {
-        qDebug() << "Is null.";
+    if (item == nullptr ||item == rootItem) {
         return {};
     }
 
-
-    if (item == rootItem) {
-        qDebug() << "Is root.";
-        return {};
-    }
-
-    qDebug() << "item:" << item->toString();
     TaskTreeItem *parent = item->parentItem();
     QList<TaskTreeItem *> parents;
     while (parent && parent != rootItem) {
         parents << parent;
         parent = parent->parentItem();
     }
-    qDebug() << "Parents size:" << parents.count();
 
     QModelIndex ix;
-    parent = rootItem;
 
     for (int i = 0; i < parents.count(); i++) {
         ix = index(parents[i]->row(), 0, ix);
