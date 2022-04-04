@@ -16,7 +16,7 @@
 
 class TaskTreeModel : public QAbstractItemModel {
 public:
-    int nextUniqueId = 1000;
+    int lastUniqueId = 0;
     explicit TaskTreeModel(QObject *parent = nullptr);
 
     ~TaskTreeModel() override;

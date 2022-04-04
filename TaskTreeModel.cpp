@@ -43,9 +43,10 @@ QVariant TaskTreeModel::data(const QModelIndex &index, int role) const {
 
         case Qt::BackgroundRole: {
             auto *item = static_cast<TaskTreeItem *>(index.internalPointer());
-            int depth = item->data(DEPTH_INDEX).value<int>();
-            if (depth >= 2) {
-                return QBrush(Qt::red);
+            if (item->getId() > 3) {
+                return QBrush(Qt::green);
+            } else {
+                return QBrush(Qt::gray);
             }
         }
 
@@ -158,7 +159,7 @@ void TaskTreeModel::setModelData(QFile *file) {
 
         if (token == QXmlStreamReader::StartElement) {
             if (xmlReader.name() == tr("TODOLIST")) {
-                nextUniqueId = xmlReader.attributes().value("NEXTUNIQUEID").toInt();
+                lastUniqueId = xmlReader.attributes().value("LASTUNIQUEID").toInt();
             }
 
             if (xmlReader.name() == tr("TASK")) {
@@ -246,7 +247,6 @@ TaskTreeItem *TaskTreeModel::getRootItem() {
 }
 
 TaskTreeItem *TaskTreeModel::insertTask(int row, bool isSubTask, const QModelIndex &parent) {
-//    qDebug() << "row:" << row << "parent:" << parent;
     beginInsertRows(parent, 0, 0);
 
     auto *itemForAttach = static_cast<TaskTreeItem *>(parent.internalPointer());
@@ -255,17 +255,11 @@ TaskTreeItem *TaskTreeModel::insertTask(int row, bool isSubTask, const QModelInd
     }
 
     QVector<QVariant> newTaskData;
-    newTaskData << QList<QVariant>({QVariant(nextUniqueId++), QVariant(0), QVariant(0), QVariant("New task #" + QString::number(nextUniqueId))});
+
+    newTaskData << QList<QVariant>({QVariant(++lastUniqueId), QVariant(0), QVariant(0),
+                                    QVariant("New task #" + QString::number(lastUniqueId))});
     auto *newTaskItem = new TaskTreeItem(newTaskData, itemForAttach);
     itemForAttach->appendChild(newTaskItem);
-//    if (isSubTask) {
-//    } else {
-//        rootItem->_childItems.insert(row + 1, new TaskTreeItem(newTask, rootItem));
-//        rootItem->appendChild(new TaskTreeItem(newTask, pTreeItem));
-
-//        TaskTreeItem *parentItem = pTreeItem->parentItem();
-//        parentItem->appendChild(new TaskTreeItem(newTask, parentItem));
-//    }
 
     endInsertRows();
 

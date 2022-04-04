@@ -127,7 +127,7 @@ void MainWindow::onSaveFileAs() {
     writer.setAutoFormatting(true);
     writer.writeStartDocument();
     writer.writeStartElement("TODOLIST");
-    writer.writeAttribute("NEXTUNIQUEID", QString::number(_model->nextUniqueId));
+    writer.writeAttribute("LASTUNIQUEID", QString::number(_model->lastUniqueId));
     writeElement(writer, _model->getRootItem());
     writer.writeEndDocument();
     qFile.close();
@@ -143,7 +143,7 @@ void MainWindow::addTaskAction(bool isSubtask) {
     auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
     TaskTreeItem *newTaskItem = _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
 
-    const QModelIndex &parent = isSubtask ? selectedIndex : QModelIndex();
+    /*const QModelIndex &parent = isSubtask ? selectedIndex : QModelIndex();
     const QModelIndex &topLeft = _model->index(newTaskItem->row(), ID_INDEX, parent);
     const QModelIndex &bottomRight = _model->index(newTaskItem->row(), COMMENTS_INDEX, parent);
     _treeView->reset();
@@ -151,7 +151,7 @@ void MainWindow::addTaskAction(bool isSubtask) {
 
     QItemSelection selection = _treeView->selectionModel()->selection();
     selection.select(topLeft, bottomRight);
-    _treeView->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+    _treeView->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);*/
 }
 
 void MainWindow::loadModelFromByFilePath(const QString &filePath) {
