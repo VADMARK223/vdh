@@ -32,23 +32,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 
     loadSettings();
-/*#pragma clang diagnostic push
-#pragma ide diagnostic ignored "UnreachableCode"
-    if (AUTO_LOAD_MODEL) { // NOLINT
-        QString filePath(":files/data.xml");
-        loadModelFromByFilePath(filePath);
-    }
-#pragma clang diagnostic pop*/
-
-    QPixmap pixmap(":images/logo.png");
-    auto *label = new QLabel;
-    label->setPixmap(pixmap);
 
     auto *closeButton = new QPushButton("Close");
 
     auto *splitter = new QSplitter;
     splitter->addWidget(_treeView);
-    splitter->addWidget(label);
     splitter->addWidget(closeButton);
     splitter->show();
 

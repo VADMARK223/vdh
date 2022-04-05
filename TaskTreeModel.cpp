@@ -169,9 +169,13 @@ void TaskTreeModel::setModelData(QFile *file) {
             if (xmlReader.name() == tr("TASK")) {
                 int id = xmlReader.attributes().value("ID").toInt();
                 int parentId = xmlReader.attributes().value("P").toInt();
-                QVector<QVariant> newData;
-                newData << QList<QVariant>(
-                        {QVariant(id), QVariant(parentId), QVariant(0), QVariant("Old task #" + QString::number(id))});
+
+                QVector<QVariant> newData(QVector<QVariant>(ColumnsData::getColumns().size()));
+                const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(ID_ALIAS))).setValue(id);
+                const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS))).setValue(parentId);
+                const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS))).setValue(QVariant(0));
+                const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(COMMENTS_ALIAS))).setValue(
+                        "Old task #" + QString::number(id));
 
                 if (parentId) {
                     // Find parent
@@ -252,8 +256,14 @@ TaskTreeItem *TaskTreeModel::insertTask(int row, bool isSubTask, const QModelInd
         itemForAttach = itemForAttach->parentItem();
     }
 
-    auto *newTaskItem = new TaskTreeItem({QVariant(++nextUniqueId), QVariant(itemForAttach->getId()), QVariant(0),
-                                          QVariant("New task #" + QString::number(nextUniqueId))}, itemForAttach);
+    QVector<QVariant> newData(QVector<QVariant>(ColumnsData::getColumns().size()));
+    const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(ID_ALIAS))).setValue(++nextUniqueId);
+    const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS))).setValue(itemForAttach->getId());
+    const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS))).setValue(0);
+    const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(COMMENTS_ALIAS))).setValue(
+            "New task #" + QString::number(nextUniqueId));
+
+    auto *newTaskItem = new TaskTreeItem(newData, itemForAttach);
 
     if (isSubTask) {
         beginInsertRows(parent, 0, 0);

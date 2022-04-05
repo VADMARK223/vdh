@@ -1,7 +1,5 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource>
-        <file>images/logo.png</file>
-        <file>files/data.xml</file>
         <file>images/file-open-20.png</file>
         <file>images/task-add-20.png</file>
         <file>images/tasklist-save-20.png</file>
