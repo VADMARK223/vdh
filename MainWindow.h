@@ -64,7 +64,6 @@ private:
 
     QToolBar *createToolBar();
 
-//    void writeElement(TaskTreeItem *pItem);
     void writeElement(QXmlStreamWriter &writer, TaskTreeItem *root);
 };
 

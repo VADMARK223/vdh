@@ -24,13 +24,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     _statusBar->addPermanentWidget(progressBar);
     setStatusBar(_statusBar);
 
-    _treeView->setModel(new TaskTreeModel());
+    _treeView->setModel(_model);
     _treeView->setHeaderHidden(false);
     _treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     _treeView->setSortingEnabled(false);
 
 
-        loadSettings();
+    loadSettings();
 /*#pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnreachableCode"
     if (AUTO_LOAD_MODEL) { // NOLINT
@@ -191,20 +191,19 @@ void MainWindow::loadModelFromByFilePath(const QString &filePath) {
         return;
     }
 
-    delete _model;
-    _model = new TaskTreeModel();
-    qDebug() << "AAAAAAAAA:";
+//    _treeView->reset();
     _model->setModelData(_file);
-    _treeView->setModel(_model);
     _treeView->expandAll();
 
-    // Selected first row
-    const QModelIndex &parent = QModelIndex();
-    const QModelIndex &topLeft = _model->index(0, ID_INDEX, parent);
-    const QModelIndex &bottomRight = _model->index(0, COMMENTS_INDEX, parent);
-    QItemSelection selection = _treeView->selectionModel()->selection();
-    selection.select(topLeft, bottomRight);
-    _treeView->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+    if (!_treeView->selectionModel()->hasSelection()) {
+        // Selected first row
+        const QModelIndex &parent = QModelIndex();
+        const QModelIndex &topLeft = _model->index(0, ID_INDEX, parent);
+        const QModelIndex &bottomRight = _model->index(0, COMMENTS_INDEX, parent);
+        QItemSelection selection = _treeView->selectionModel()->selection();
+        selection.select(topLeft, bottomRight);
+        _treeView->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+    }
 
     _file->close();
 }

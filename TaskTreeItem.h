@@ -41,6 +41,8 @@ public:
 
     QVector<QVariant> getItemData();
 
+    void clear();
+
 /*
 private:
     [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex &parent) const override;
@@ -54,10 +56,8 @@ private:
     [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;
 */
 
-public:
-
-    QVector<TaskTreeItem *> _childItems;
 private:
+    QVector<TaskTreeItem *> _childItems;
     QVector<QVariant> _itemData;
     TaskTreeItem *_parentItem;
 };

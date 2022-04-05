@@ -74,6 +74,10 @@ int TaskTreeItem::getParentId() const {
 QVector<QVariant> TaskTreeItem::getItemData() {
     return _itemData;
 }
+
+void TaskTreeItem::clear() {
+    _childItems.clear();
+}
 /*
 QModelIndex TaskTreeItem::index(int row, int column, const QModelIndex &parent) const {
     return QModelIndex();

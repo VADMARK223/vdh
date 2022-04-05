@@ -28,7 +28,6 @@ int TaskTreeModel::columnCount(const QModelIndex &parent) const {
 
 QVariant TaskTreeModel::data(const QModelIndex &index, int role) const {
     if (!index.isValid()) {
-        qDebug() << "Not valid:";
         return {};
     }
 
@@ -42,17 +41,16 @@ QVariant TaskTreeModel::data(const QModelIndex &index, int role) const {
             return QSize(0, 20);
         }
 
-        case Qt::BackgroundRole: {
+        /*case Qt::BackgroundRole: {
             auto *item = static_cast<TaskTreeItem *>(index.internalPointer());
             if (item->getId() > 3) {
                 return QBrush(Qt::green);
             } else {
                 return QBrush(Qt::gray);
             }
-        }
+        }*/
 
         default:
-//            qDebug() << "Role:" << role;
             return {};
     }
 }
@@ -61,6 +59,8 @@ Qt::ItemFlags TaskTreeModel::flags(const QModelIndex &index) const {
     if (!index.isValid()) {
         return Qt::NoItemFlags;
     }
+
+
 
 //    auto *item = static_cast<TaskTreeItem *>(index.internalPointer());
 //    if (item->getId() == 2) {
@@ -140,6 +140,7 @@ int TaskTreeModel::rowCount(const QModelIndex &parent) const {
 }
 
 void TaskTreeModel::setModelData(QFile *file) {
+    rootItem->clear();
     QVector<TaskTreeItem *> parents;
     parents << rootItem;
 
