@@ -9,8 +9,10 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QTreeView>
+#include <QSettings>
+#include <QStatusBar>
 
-const bool AUTO_LOAD_MODEL = true;
+//const bool AUTO_LOAD_MODEL = true;
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -37,15 +39,26 @@ public slots:
                        const QList<int> &roles = QList<int>());
 
     void onRowsInserted(const QModelIndex &parent, int first, int last);
+
     void onRowsAboutToBeInserted(const QModelIndex &parent, int first, int last);
 
     void preferenceAction();
 
     void saveAction();
 
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
 private:
-    QTreeView *_treeView = new QTreeView();
-    TaskTreeModel *_model = new TaskTreeModel();
+    QSettings *_settings = new QSettings("settings.ini", QSettings::IniFormat);
+    QFile *_file = new QFile(this);
+    QTreeView *_treeView = new QTreeView(this);
+    TaskTreeModel *_model = new TaskTreeModel(this);
+    QStatusBar *_statusBar = new QStatusBar(this);
+
+    void loadSettings();
+
+    void writeSettings();
 
     QMenuBar *createMenuBar();
 

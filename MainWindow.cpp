@@ -7,42 +7,37 @@
 #include <QFile>
 #include <QLabel>
 #include <QSplitter>
-#include <QShortcut>
 #include <QMessageBox>
 #include <QDir>
 #include <QToolBar>
 #include <QPushButton>
-#include <QStatusBar>
 #include <QProgressBar>
-#include <QAbstractItemModelTester>
-#include <QThread>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-    auto *tester = new QAbstractItemModelTester(_model, QAbstractItemModelTester::FailureReportingMode::Fatal, this);
-
+//    loadSettings();
 
     setMenuBar(createMenuBar());
     addToolBar(createToolBar());
-    auto *statusBar = new QStatusBar;
-    statusBar->showMessage("Choose a task."/*, 1000*/);
+
     auto *progressBar = new QProgressBar;
     progressBar->setValue(4);
-    statusBar->addPermanentWidget(progressBar);
-    setStatusBar(statusBar);
+    _statusBar->addPermanentWidget(progressBar);
+    setStatusBar(_statusBar);
 
+    _treeView->setModel(new TaskTreeModel());
     _treeView->setHeaderHidden(false);
     _treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     _treeView->setSortingEnabled(false);
-//    _treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
 
-#pragma clang diagnostic push
+        loadSettings();
+/*#pragma clang diagnostic push
 #pragma ide diagnostic ignored "UnreachableCode"
     if (AUTO_LOAD_MODEL) { // NOLINT
         QString filePath(":files/data.xml");
         loadModelFromByFilePath(filePath);
     }
-#pragma clang diagnostic pop
+#pragma clang diagnostic pop*/
 
     QPixmap pixmap(":images/logo.png");
     auto *label = new QLabel;
@@ -105,7 +100,25 @@ void MainWindow::onOpenFileClicked() {
 }
 
 void MainWindow::saveAction() {
-    qDebug() << "Save";
+    if (_file == nullptr) {
+        return;
+    }
+
+    if (!_file->open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Error file", "Failed to open file: '" + _file->fileName() + "'.", QMessageBox::Ok);
+        _file->close();
+        return;
+    }
+
+    QXmlStreamWriter writer;
+    writer.setDevice(_file);
+    writer.setAutoFormatting(true);
+    writer.writeStartDocument();
+    writer.writeStartElement("TODOLIST");
+    writer.writeAttribute("NEXTUNIQUEID", QString::number(_model->nextUniqueId + 1));
+    writeElement(writer, _model->getRootItem());
+    writer.writeEndDocument();
+    _file->close();
 }
 
 void MainWindow::onSaveFileAs() {
@@ -116,22 +129,23 @@ void MainWindow::onSaveFileAs() {
         return;
     }
 
-    QFile qFile(filePath);
-    if (!qFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    _file->setFileName(filePath);
+
+    if (!_file->open(QIODevice::WriteOnly | QIODevice::Text)) {
         QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
-        qFile.close();
+        _file->close();
         return;
     }
 
     QXmlStreamWriter writer;
-    writer.setDevice(&qFile);
+    writer.setDevice(_file);
     writer.setAutoFormatting(true);
     writer.writeStartDocument();
     writer.writeStartElement("TODOLIST");
     writer.writeAttribute("NEXTUNIQUEID", QString::number(_model->nextUniqueId));
     writeElement(writer, _model->getRootItem());
     writer.writeEndDocument();
-    qFile.close();
+    _file->close();
 }
 
 void MainWindow::addTaskAction(bool isSubtask) {
@@ -167,16 +181,20 @@ void MainWindow::loadModelFromByFilePath(const QString &filePath) {
         return;
     }
 
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    _statusBar->showMessage(filePath);
+
+    _file->setFileName(filePath);
+
+    if (!_file->open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
-        file.close();
+        _file->close();
         return;
     }
 
     delete _model;
     _model = new TaskTreeModel();
-    _model->setModelData(&file);
+    qDebug() << "AAAAAAAAA:";
+    _model->setModelData(_file);
     _treeView->setModel(_model);
     _treeView->expandAll();
 
@@ -188,7 +206,7 @@ void MainWindow::loadModelFromByFilePath(const QString &filePath) {
     selection.select(topLeft, bottomRight);
     _treeView->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
 
-    file.close();
+    _file->close();
 }
 
 QMenuBar *MainWindow::createMenuBar() {
@@ -268,4 +286,42 @@ void MainWindow::onRowsInserted(const QModelIndex &parent, int first, int last) 
 void MainWindow::onRowsAboutToBeInserted(const QModelIndex &parent, int first, int last) {
     auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
 //    qDebug() << "Insert pTreeItem:" << pTreeItem->toString();
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    writeSettings();
+}
+
+void MainWindow::loadSettings() {
+    _settings->beginGroup("MainWindowPosition");
+    int x = _settings->value("x", -1).toInt();
+    int y = _settings->value("y", -1).toInt();
+    int width = _settings->value("width", -1).toInt();
+    int height = _settings->value("height", -1).toInt();
+    _settings->endGroup();
+
+    _settings->beginGroup("Preferences");
+    const QString &fileName = _settings->value("fileName", "").toString();
+    if (!fileName.isEmpty()) {
+        loadModelFromByFilePath(fileName);
+    }
+    _settings->endGroup();
+
+    this->setMinimumSize(1000, 500);
+    if (x > 0 && y > 0 && width > 0 && height > 0) {
+        this->setGeometry(x, y, width, height);
+    }
+}
+
+void MainWindow::writeSettings() {
+    _settings->beginGroup("MainWindowPosition");
+    _settings->setValue("x", this->x());
+    _settings->setValue("y", this->y());
+    _settings->setValue("width", this->width());
+    _settings->setValue("height", this->height());
+    _settings->endGroup();
+
+    _settings->beginGroup("Preferences");
+    _settings->setValue("fileName", _file->fileName());
+    _settings->endGroup();
 }
