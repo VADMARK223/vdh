@@ -72,6 +72,10 @@ int TaskTreeItem::getParentId() const {
     return this->data(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS)).toInt();
 }
 
+QString TaskTreeItem::getTitle() const {
+    return this->data(ColumnsData::getIndexByAlias(TITLE_ALIAS)).toString();
+}
+
 QVector<QVariant> TaskTreeItem::getItemData() {
     return _itemData;
 }

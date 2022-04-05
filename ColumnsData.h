@@ -8,8 +8,9 @@
 #include <QString>
 #include <QVector>
 
-#define ID_ALIAS "ID_ALIAS"
-#define PARENT_ID_ALIAS "PARENT_ID_ALIAS"
+#define TITLE_ALIAS "TITLE"
+#define ID_ALIAS "ID"
+#define PARENT_ID_ALIAS "P"
 #define DEPTH_ALIAS "DEPTH_ALIAS"
 #define COMMENTS_ALIAS "COMMENTS_ALIAS"
 
@@ -27,6 +28,8 @@ public:
     static int getIndexByAlias(QString alias); // TODO: Need map
 private:
     static const QVector<COLUMN> _columns;
+
+    static COLUMN createColumn(int index, const char *alias, const char *name, int width, bool hide);
 };
 
 

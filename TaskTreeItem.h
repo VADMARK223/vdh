@@ -34,22 +34,11 @@ public:
 
     [[nodiscard]] int getParentId() const;
 
+    [[nodiscard]] QString getTitle() const;
+
     QVector<QVariant> getItemData();
 
     void clear();
-
-/*
-private:
-    [[nodiscard]] QModelIndex index(int row, int column, const QModelIndex &parent) const override;
-
-    [[nodiscard]] QModelIndex parent(const QModelIndex &child) const override;
-
-    [[nodiscard]] int rowCount(const QModelIndex &parent) const override;
-
-    [[nodiscard]] int columnCount(const QModelIndex &parent) const override;
-
-    [[nodiscard]] QVariant data(const QModelIndex &index, int role) const override;
-*/
 
 private:
     QVector<TaskTreeItem *> _childItems;

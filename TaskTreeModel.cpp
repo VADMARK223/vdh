@@ -62,14 +62,7 @@ Qt::ItemFlags TaskTreeModel::flags(const QModelIndex &index) const {
         return Qt::NoItemFlags;
     }
 
-
-
-//    auto *item = static_cast<TaskTreeItem *>(index.internalPointer());
-//    if (item->getId() == 2) {
-
-//    index.column() == ID_INDEX
-
-    if (index.column() == ColumnsData::getIndexByAlias(COMMENTS_ALIAS)) {
+    if (index.column() == ColumnsData::getIndexByAlias(TITLE_ALIAS)) {
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
     } else {
         return QAbstractItemModel::flags(index);
@@ -167,11 +160,13 @@ void TaskTreeModel::setModelData(QFile *file) {
             }
 
             if (xmlReader.name() == tr("TASK")) {
-                int id = xmlReader.attributes().value("ID").toInt();
-                int parentId = xmlReader.attributes().value("P").toInt();
+                int id = xmlReader.attributes().value(ID_ALIAS).toInt();
+                QString title = xmlReader.attributes().value(TITLE_ALIAS).toString();
+                int parentId = xmlReader.attributes().value(PARENT_ID_ALIAS).toInt();
 
                 QVector<QVariant> newData(QVector<QVariant>(ColumnsData::getColumns().size()));
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(ID_ALIAS))).setValue(id);
+                const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(TITLE_ALIAS))).setValue(title);
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS))).setValue(parentId);
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS))).setValue(QVariant(0));
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(COMMENTS_ALIAS))).setValue(
@@ -250,7 +245,7 @@ TaskTreeItem *TaskTreeModel::getRootItem() {
     return rootItem;
 }
 
-TaskTreeItem *TaskTreeModel::insertTask(int row, bool isSubTask, const QModelIndex &parent) {
+TaskTreeItem *TaskTreeModel::insertTask([[maybe_unused]] int row, bool isSubTask, const QModelIndex &parent) {
     auto *itemForAttach = static_cast<TaskTreeItem *>(parent.internalPointer());
     if (!isSubTask) {
         itemForAttach = itemForAttach->parentItem();
@@ -258,6 +253,7 @@ TaskTreeItem *TaskTreeModel::insertTask(int row, bool isSubTask, const QModelInd
 
     QVector<QVariant> newData(QVector<QVariant>(ColumnsData::getColumns().size()));
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(ID_ALIAS))).setValue(++nextUniqueId);
+    const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(TITLE_ALIAS))).setValue(QString("Task"));
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS))).setValue(itemForAttach->getId());
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS))).setValue(0);
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(COMMENTS_ALIAS))).setValue(

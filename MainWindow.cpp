@@ -6,7 +6,6 @@
 #include "ColumnsData.h"
 #include <QMenuBar>
 #include <QFile>
-#include <QLabel>
 #include <QSplitter>
 #include <QMessageBox>
 #include <QDir>
@@ -136,7 +135,7 @@ void MainWindow::onSaveFileAs() {
     writer.setAutoFormatting(true);
     writer.writeStartDocument();
     writer.writeStartElement("TODOLIST");
-    writer.writeAttribute("NEXTUNIQUEID", QString::number(_model->nextUniqueId));
+    writer.writeAttribute("NEXTUNIQUEID", QString::number(_model->nextUniqueId + 1));
     writeElement(writer, _model->getRootItem());
     writer.writeEndDocument();
     _file->close();
@@ -178,6 +177,13 @@ void MainWindow::loadModelFromByFilePath(const QString &filePath) {
     _statusBar->showMessage(filePath);
 
     _file->setFileName(filePath);
+
+    if (!_file->exists()) {
+        QMessageBox::warning(this, "Error file", "File: '" + filePath + "' not exists.", QMessageBox::Ok);
+        _file->close();
+        return;
+    }
+
 
     if (!_file->open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
@@ -248,8 +254,9 @@ void MainWindow::writeElement(QXmlStreamWriter &writer, TaskTreeItem *root) {
     for (int i = 0; i < root->childCount(); ++i) {
         TaskTreeItem *child = root->child(i);
         writer.writeStartElement("TASK");
-        writer.writeAttribute("ID", QString::number(child->getId()));
-        writer.writeAttribute("P", QString::number(child->getParentId()));
+        writer.writeAttribute(ID_ALIAS, QString::number(child->getId()));
+        writer.writeAttribute(TITLE_ALIAS, child->getTitle());
+        writer.writeAttribute(PARENT_ID_ALIAS, QString::number(child->getParentId()));
 
         if (child->childCount()) {
             writeElement(writer, child);

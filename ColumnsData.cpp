@@ -7,34 +7,13 @@
 
 const QVector<COLUMN> ColumnsData::_columns = [] { // NOLINT(cert-err58-cpp)
     QVector<COLUMN> result;
-    COLUMN column0;
-    column0.index = static_cast<int>(result.size());
-    column0.alias = ID_ALIAS;
-    column0.name = "ID";
-    column0.width = 150;
-    result << column0;
 
-    COLUMN column1;
-    column1.index = static_cast<int>(result.size());
-    column1.alias = PARENT_ID_ALIAS;
-    column1.name = "Parent ID";
-    column1.width = 60;
-    result << column1;
+    result << createColumn(static_cast<int>(result.size()), TITLE_ALIAS, "Title", 150, false);
+    result << createColumn(static_cast<int>(result.size()), ID_ALIAS, "ID", 30, false);
+    result << createColumn(static_cast<int>(result.size()), PARENT_ID_ALIAS, "Parent ID", 60, false);
+    result << createColumn(static_cast<int>(result.size()), DEPTH_ALIAS, "Depth", 50, false);
+    result << createColumn(static_cast<int>(result.size()), COMMENTS_ALIAS, "Comments", 50, false);
 
-    COLUMN column2;
-    column2.index = static_cast<int>(result.size());
-    column2.alias = DEPTH_ALIAS;
-    column2.name = "Depth";
-    column2.width = 50;
-    column2.hide = false;
-    result << column2;
-
-    COLUMN column3;
-    column3.index = static_cast<int>(result.size());
-    column3.alias = COMMENTS_ALIAS;
-    column3.name = "Comments";
-    column3.width = 50;
-    result << column3;
     return result;
 }();
 
@@ -50,5 +29,15 @@ int ColumnsData::getIndexByAlias(QString alias) {
     }
 
     return -1;
+}
+
+COLUMN ColumnsData::createColumn(int index, const char *alias, const char *name, int width, bool hide) {
+    COLUMN column;
+    column.index = index;
+    column.alias = alias;
+    column.name = name;
+    column.width = width;
+    column.hide = hide;
+    return column;
 }
 
