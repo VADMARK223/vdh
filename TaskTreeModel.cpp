@@ -160,7 +160,7 @@ void TaskTreeModel::setModelData(QFile *file) {
 
         if (token == QXmlStreamReader::StartElement) {
             if (xmlReader.name() == tr("TODOLIST")) {
-                lastUniqueId = xmlReader.attributes().value("LASTUNIQUEID").toInt();
+                nextUniqueId = xmlReader.attributes().value("NEXTUNIQUEID").toInt() - 1;
             }
 
             if (xmlReader.name() == tr("TASK")) {
@@ -253,10 +253,10 @@ TaskTreeItem *TaskTreeModel::insertTask(int row, bool isSubTask, const QModelInd
         itemForAttach = itemForAttach->parentItem();
     }
 
-    QVector<QVariant> newTaskData;
+    QVector <QVariant> newTaskData;
 
-    newTaskData << QList<QVariant>({QVariant(++lastUniqueId), QVariant(0), QVariant(0),
-                                    QVariant("New task #" + QString::number(lastUniqueId))});
+    newTaskData << QList<QVariant>({QVariant(++nextUniqueId), QVariant(0), QVariant(0),
+                                    QVariant("New task #" + QString::number(nextUniqueId))});
     auto *newTaskItem = new TaskTreeItem(newTaskData, itemForAttach);
 
     if (isSubTask) {
@@ -273,12 +273,12 @@ TaskTreeItem *TaskTreeModel::insertTask(int row, bool isSubTask, const QModelInd
 }
 
 QModelIndex TaskTreeModel::indexFromItem(TaskTreeItem *item) {
-    if (item == nullptr ||item == rootItem) {
+    if (item == nullptr || item == rootItem) {
         return {};
     }
 
     TaskTreeItem *parent = item->parentItem();
-    QList<TaskTreeItem *> parents;
+    QList < TaskTreeItem * > parents;
     while (parent && parent != rootItem) {
         parents << parent;
         parent = parent->parentItem();

@@ -128,7 +128,7 @@ void MainWindow::onSaveFileAs() {
     writer.setAutoFormatting(true);
     writer.writeStartDocument();
     writer.writeStartElement("TODOLIST");
-    writer.writeAttribute("LASTUNIQUEID", QString::number(_model->lastUniqueId));
+    writer.writeAttribute("NEXTUNIQUEID", QString::number(_model->nextUniqueId));
     writeElement(writer, _model->getRootItem());
     writer.writeEndDocument();
     qFile.close();
