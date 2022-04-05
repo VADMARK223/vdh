@@ -3,15 +3,17 @@
 //
 
 #include "TaskTreeModel.h"
+#include "ColumnsData.h"
 
 
 TaskTreeModel::TaskTreeModel(QObject *parent) : QAbstractItemModel(parent) {
-    rootItem = new TaskTreeItem({
-                                        tr("ID"),
-                                        tr("Parent ID"),
-                                        tr("Depth"),
-                                        tr("Comments")
-                                });
+    QVector<QVariant> data = {};
+
+    for (const auto &column: ColumnsData::getColumns()) {
+        data << QVariant(column.name);
+    }
+
+    rootItem = new TaskTreeItem(data);
 }
 
 TaskTreeModel::~TaskTreeModel() {
@@ -41,14 +43,14 @@ QVariant TaskTreeModel::data(const QModelIndex &index, int role) const {
             return QSize(0, 20);
         }
 
-        /*case Qt::BackgroundRole: {
-            auto *item = static_cast<TaskTreeItem *>(index.internalPointer());
-            if (item->getId() > 3) {
-                return QBrush(Qt::green);
-            } else {
-                return QBrush(Qt::gray);
-            }
-        }*/
+            /*case Qt::BackgroundRole: {
+                auto *item = static_cast<TaskTreeItem *>(index.internalPointer());
+                if (item->getId() > 3) {
+                    return QBrush(Qt::green);
+                } else {
+                    return QBrush(Qt::gray);
+                }
+            }*/
 
         default:
             return {};
@@ -250,11 +252,8 @@ TaskTreeItem *TaskTreeModel::insertTask(int row, bool isSubTask, const QModelInd
         itemForAttach = itemForAttach->parentItem();
     }
 
-    QVector<QVariant> newTaskData;
-
-    newTaskData << QList<QVariant>({QVariant(++nextUniqueId), QVariant(0), QVariant(0),
-                                    QVariant("New task #" + QString::number(nextUniqueId))});
-    auto *newTaskItem = new TaskTreeItem(newTaskData, itemForAttach);
+    auto *newTaskItem = new TaskTreeItem({QVariant(++nextUniqueId), QVariant(itemForAttach->getId()), QVariant(0),
+                                          QVariant("New task #" + QString::number(nextUniqueId))}, itemForAttach);
 
     if (isSubTask) {
         beginInsertRows(parent, 0, 0);

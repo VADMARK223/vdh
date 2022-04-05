@@ -21,7 +21,7 @@ public:
 
 public slots:
 
-    void newFileAction();
+    static void newFileAction();
 
     void onOpenFileClicked();
 
@@ -35,14 +35,14 @@ public slots:
 
     void onCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
 
-    void onDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
+    static void onDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
                        const QList<int> &roles = QList<int>());
 
-    void onRowsInserted(const QModelIndex &parent, int first, int last);
+    static void onRowsInserted(const QModelIndex &parent, int first, int last);
 
-    void onRowsAboutToBeInserted(const QModelIndex &parent, int first, int last);
+    static void onRowsAboutToBeInserted(const QModelIndex &parent, int first, int last);
 
-    void preferenceAction();
+    static void preferenceAction();
 
     void saveAction();
 

@@ -3,6 +3,7 @@
 //
 
 #include "MainWindow.h"
+#include "ColumnsData.h"
 #include <QMenuBar>
 #include <QFile>
 #include <QLabel>
@@ -49,37 +50,42 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     splitter->addWidget(_treeView);
     splitter->addWidget(label);
     splitter->addWidget(closeButton);
-//    splitter->setSizes(QList<int>({200, 100}));
     splitter->show();
+
     _treeView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    for (const auto &column: ColumnsData::getColumns()) {
+        _treeView->setColumnWidth(column.index, column.width);
+        _treeView->setColumnHidden(column.index, column.hide);
+    }
+
     closeButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setCentralWidget(splitter);
 
     connect(_treeView->selectionModel(),
-            SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
+            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
             this,
-            SLOT(onSelectionChanged(QItemSelection, QItemSelection)));
+            SLOT(onSelectionChanged(QItemSelection,QItemSelection)));
 
     connect(_treeView->selectionModel(),
-            SIGNAL(currentChanged(QModelIndex, QModelIndex)),
+            SIGNAL(currentChanged(QModelIndex,QModelIndex)),
             this,
-            SLOT(onCurrentChanged(QModelIndex, QModelIndex)));
+            SLOT(onCurrentChanged(QModelIndex,QModelIndex)));
 
     connect(_treeView->model(),
-            SIGNAL(dataChanged(QModelIndex, QModelIndex, QList<int>)),
+            SIGNAL(dataChanged(QModelIndex,QModelIndex,QList<int>)),
             this,
-            SLOT(onDataChanged(QModelIndex, QModelIndex, QList<int>)));
+            SLOT(onDataChanged(QModelIndex,QModelIndex,QList<int>)));
 
     connect(_treeView->model(),
-            SIGNAL(rowsInserted(QModelIndex, int, int)),
+            SIGNAL(rowsInserted(QModelIndex,int,int)),
             this,
-            SLOT(onRowsInserted(QModelIndex, int, int)));
+            SLOT(onRowsInserted(QModelIndex,int,int)));
 
     connect(_treeView->model(),
-            SIGNAL(rowsAboutToBeInserted(QModelIndex, int, int)),
+            SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)),
             this,
-            SLOT(onRowsAboutToBeInserted(QModelIndex, int, int)));
+            SLOT(onRowsAboutToBeInserted(QModelIndex,int,int)));
 
 
     connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
@@ -278,12 +284,12 @@ void MainWindow::onDataChanged(const QModelIndex &topLeft, const QModelIndex &bo
 }
 
 void MainWindow::onRowsInserted(const QModelIndex &parent, int first, int last) {
-    auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
+//    auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
 //    qDebug() << "Insert pTreeItem:" << pTreeItem->toString();
 }
 
 void MainWindow::onRowsAboutToBeInserted(const QModelIndex &parent, int first, int last) {
-    auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
+//    auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
 //    qDebug() << "Insert pTreeItem:" << pTreeItem->toString();
 }
 
