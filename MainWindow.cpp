@@ -29,13 +29,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     _treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     _treeView->setSortingEnabled(false);
 
-
     loadSettings();
 
     auto *closeButton = new QPushButton("Close");
 
     auto *splitter = new QSplitter;
     splitter->addWidget(_treeView);
+    splitter->addWidget(_commentsPlainTextEdit);
     splitter->addWidget(closeButton);
     splitter->show();
 
@@ -292,7 +292,16 @@ void MainWindow::writeElement(QXmlStreamWriter &writer, TaskTreeItem *root) {
 }
 
 void MainWindow::onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
-//    qDebug() << "Selection change selected:" << selected << "deselected:" << deselected;
+    qDebug() << "Selection change selected:" << selected << "deselected:" << deselected;
+    auto &range = const_cast<QItemSelectionRange &>(selected.first());
+    qDebug() << "range:" << range;
+    const QModelIndexList &list = range.indexes();
+    qDebug() << "list:" << list;
+    auto &index = const_cast<QModelIndex &>(list.first());
+    qDebug() << "index:" << index;
+    auto *itemForAttach = static_cast<TaskTreeItem *>(index.internalPointer());
+    qDebug() << "item:" << itemForAttach->toString();
+    _commentsPlainTextEdit->setPlainText(itemForAttach->getComments());
 }
 
 void MainWindow::onCurrentChanged(const QModelIndex &current, const QModelIndex &previous) {

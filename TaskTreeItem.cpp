@@ -89,6 +89,10 @@ QString TaskTreeItem::getTitle() const {
     return this->data(ColumnsData::getIndexByAlias(TITLE_ALIAS)).toString();
 }
 
+QString TaskTreeItem::getComments() const {
+    return this->data(ColumnsData::getIndexByAlias(COMMENTS_ALIAS)).toString();
+}
+
 QVector<QVariant> TaskTreeItem::getItemData() {
     return _itemData;
 }

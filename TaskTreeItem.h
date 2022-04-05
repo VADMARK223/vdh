@@ -42,6 +42,8 @@ public:
 
     [[nodiscard]] QString getTitle() const;
 
+    [[nodiscard]] QString getComments() const;
+
     QVector<QVariant> getItemData();
 
     void clear();
