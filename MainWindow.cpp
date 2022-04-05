@@ -82,6 +82,17 @@ void MainWindow::newFileAction() {
     qDebug() << "New file action.";
 }
 
+void MainWindow::deleteTaskAction() {
+    bool hasSelection = _treeView->selectionModel()->hasSelection();
+    if (!hasSelection) {
+        QMessageBox::information(this, "Info", "Please select a task to delete.", QMessageBox::Ok);
+        return;
+    }
+    const QModelIndexList &selectedIndexesList = _treeView->selectionModel()->selectedIndexes();
+    auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
+    _model->deleteTask(selectedIndex.row(), selectedIndex);
+}
+
 void MainWindow::preferenceAction() {
     qDebug() << "Preference action:";
 }
@@ -220,6 +231,9 @@ QMenuBar *MainWindow::createMenuBar() {
     fileMenu->addSeparator();
     fileMenu->addAction("E&xit", this, SLOT(close()), tr("Alt+F4"));
 
+    auto *editMenu = new QMenu("&Edit");
+    editMenu->addAction("&Delete Selected Task", this, SLOT(deleteTaskAction()), tr("Delete"));
+
     auto *toolsMenu = new QMenu("&Tools");
     toolsMenu->addAction("Preferences...");
 
@@ -227,6 +241,7 @@ QMenuBar *MainWindow::createMenuBar() {
     helpMenu->addAction("&About vdh");
 
     menuBar->addMenu(fileMenu);
+    menuBar->addMenu(editMenu);
     menuBar->addMenu(toolsMenu);
     menuBar->addMenu(helpMenu);
 
@@ -245,6 +260,7 @@ QToolBar *MainWindow::createToolBar() {
     toolBar->addAction(QPixmap(":images/sub-task-add.png"), "New Subtask", this, [this] { addTaskAction(true); });
     toolBar->addSeparator();
     toolBar->addAction(QPixmap(":images/tasklist-new.png"), "New Tasklist", this, SLOT(newFileAction()));
+    toolBar->addAction(QPixmap(":images/delete.png"), "Delete Task (Delete)", this, SLOT(deleteTaskAction()));
     toolBar->addAction(QPixmap(":images/settings.png"), "Preference", this, SLOT(preferenceAction()));
     addToolBar(toolBar);
     return toolBar;

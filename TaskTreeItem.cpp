@@ -17,6 +17,14 @@ void TaskTreeItem::appendChild(TaskTreeItem *item) {
     _childItems.append(item);
 }
 
+void TaskTreeItem::removeChildren() {
+    _childItems.clear();
+}
+
+void TaskTreeItem::removeChildAtRow(int row) {
+    _childItems.removeAt(row);
+}
+
 TaskTreeItem *TaskTreeItem::child(int row) {
     if (row < 0 || row >= _childItems.size()) {
         return nullptr;
@@ -58,9 +66,10 @@ int TaskTreeItem::row() const {
     qTextStream << this;
 
     return "TaskTreeItem(" +
+           this->data(ColumnsData::getIndexByAlias(TITLE_ALIAS)).toString() + "," +
            this->data(ColumnsData::getIndexByAlias(ID_ALIAS)).toString() + "," +
            this->data(ColumnsData::getIndexByAlias(DEPTH_ALIAS)).toString() + "," +
-            addressString +
+           addressString +
            ")";
 }
 

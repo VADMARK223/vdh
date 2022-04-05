@@ -16,6 +16,10 @@ public:
 
     void appendChild(TaskTreeItem *item);
 
+    void removeChildren();
+
+    void removeChildAtRow(int row);
+
     TaskTreeItem *child(int row);
 
     [[nodiscard]] int childCount() const;

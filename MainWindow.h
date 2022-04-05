@@ -25,6 +25,8 @@ public slots:
 
     void onOpenFileClicked();
 
+    void deleteTaskAction();
+
     void onSaveFileAs();
 
     void loadModelFromByFilePath(const QString &qString);
@@ -36,7 +38,7 @@ public slots:
     void onCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
 
     static void onDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight,
-                       const QList<int> &roles = QList<int>());
+                              const QList<int> &roles = QList<int>());
 
     static void onRowsInserted(const QModelIndex &parent, int first, int last);
 

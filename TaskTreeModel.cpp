@@ -245,6 +245,22 @@ TaskTreeItem *TaskTreeModel::getRootItem() {
     return rootItem;
 }
 
+void TaskTreeModel::deleteTask(int row, const QModelIndex &parent) {
+    auto *item = static_cast<TaskTreeItem *>(parent.internalPointer());
+
+    // Remove children
+    beginRemoveRows(parent, item->childCount(), item->childCount() - 1);
+    item->removeChildren();
+    endRemoveRows();
+
+    // Remove current task
+    auto *parentItem = item->parentItem();
+    const QModelIndex &parentIndex = indexFromItem(parentItem);
+    beginRemoveRows(parentIndex, parentItem->childCount(), parentItem->childCount());
+    parentItem->removeChildAtRow(row);
+    endRemoveRows();
+}
+
 TaskTreeItem *TaskTreeModel::insertTask([[maybe_unused]] int row, bool isSubTask, const QModelIndex &parent) {
     auto *itemForAttach = static_cast<TaskTreeItem *>(parent.internalPointer());
     if (!isSubTask) {
