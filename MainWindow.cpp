@@ -224,18 +224,22 @@ QMenuBar *MainWindow::createMenuBar() {
     auto *menuBar = new QMenuBar;
 
     auto *fileMenu = new QMenu("&File");
-    fileMenu->addAction("&New Tasklist...", this, SLOT(newFileAction()));
+    fileMenu->addAction(QPixmap(":images/new.png"), "&New Tasklist...", this, SLOT(newFileAction()));
     fileMenu->addSeparator();
-    fileMenu->addAction("&Open Tasklist...", this, SLOT(onOpenFileClicked()), tr("Ctrl+O"));
+    fileMenu->addAction(QPixmap(":images/open.png"), "&Open Tasklist...", this, SLOT(onOpenFileClicked()),
+                        tr("Ctrl+O"));
+    fileMenu->addAction(QPixmap(":images/save.png"), "&Save Tasklist", this, SLOT(saveAction()), tr("Ctrl+S"));
+
     fileMenu->addAction("Save Tasklist &As...", this, SLOT(onSaveFileAs()));
     fileMenu->addSeparator();
     fileMenu->addAction("E&xit", this, SLOT(close()), tr("Alt+F4"));
 
     auto *editMenu = new QMenu("&Edit");
-    editMenu->addAction("&Delete Selected Task", this, SLOT(deleteTaskAction()), tr("Delete"));
+    editMenu->addAction(QPixmap(":images/delete.png"), "&Delete Selected Task", this, SLOT(deleteTaskAction()),
+                        tr("Delete"));
 
     auto *toolsMenu = new QMenu("&Tools");
-    toolsMenu->addAction("Preferences...");
+    toolsMenu->addAction(QPixmap(":images/settings.png"), "Preferences...");
 
     auto *helpMenu = new QMenu("&Help");
     helpMenu->addAction("&About vdh");
@@ -250,16 +254,16 @@ QMenuBar *MainWindow::createMenuBar() {
 
 QToolBar *MainWindow::createToolBar() {
     auto *toolBar = new QToolBar();
-    toolBar->addAction(QPixmap(":images/file-open-20.png"), "Open Tasklist (Ctrl+O)", this, SLOT(onOpenFileClicked()));
-    toolBar->addAction(QPixmap(":images/tasklist-save-20.png"), "Save Tasklist", this, SLOT(saveAction()));
+    toolBar->addAction(QPixmap(":images/open.png"), "Open Tasklist (Ctrl+O)", this, SLOT(onOpenFileClicked()));
+    toolBar->addAction(QPixmap(":images/save.png"), "Save Tasklist", this, SLOT(saveAction()));
     toolBar->addSeparator();
-    toolBar->addAction(QPixmap(":images/task-add-20.png"), "New Task", this, [this] { addTaskAction(false); });
-//    QAction *pAction = toolBar->addAction(QPixmap(":images/task-add-20.png"), "New Task");
+    toolBar->addAction(QPixmap(":images/add.png"), "New Task", this, [this] { addTaskAction(false); });
+//    QAction *pAction = toolBar->addAction(QPixmap(":images/add.png"), "New Task");
 //    connect(pAction, &QAction::triggered, this, [this] { addTaskAction(); });
 
-    toolBar->addAction(QPixmap(":images/sub-task-add.png"), "New Subtask", this, [this] { addTaskAction(true); });
+    toolBar->addAction(QPixmap(":images/add-sub.png"), "New Subtask", this, [this] { addTaskAction(true); });
     toolBar->addSeparator();
-    toolBar->addAction(QPixmap(":images/tasklist-new.png"), "New Tasklist", this, SLOT(newFileAction()));
+    toolBar->addAction(QPixmap(":images/new.png"), "New Tasklist", this, SLOT(newFileAction()));
     toolBar->addAction(QPixmap(":images/delete.png"), "Delete Task (Delete)", this, SLOT(deleteTaskAction()));
     toolBar->addAction(QPixmap(":images/settings.png"), "Preference", this, SLOT(preferenceAction()));
     addToolBar(toolBar);

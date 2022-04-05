@@ -1,12 +1,12 @@
 <!DOCTYPE RCC><RCC version="1.0">
     <qresource>
-        <file>images/file-open-20.png</file>
-        <file>images/task-add-20.png</file>
-        <file>images/tasklist-save-20.png</file>
+        <file>images/open.png</file>
+        <file>images/add-sub.png</file>
+        <file>images/save.png</file>
         <file>images/settings.png</file>
         <file>images/ava.png</file>
-        <file>images/sub-task-add.png</file>
-        <file>images/tasklist-new.png</file>
+        <file>images/add.png</file>
+        <file>images/new.png</file>
         <file>images/delete.png</file>
     </qresource>
 </RCC>
