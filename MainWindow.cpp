@@ -142,22 +142,24 @@ void MainWindow::addTaskAction(bool isSubtask) {
     }
     const QModelIndexList &selectedIndexesList = _treeView->selectionModel()->selectedIndexes();
     auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
-    _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
+    /*TaskTreeItem *newTaskItem =*/ _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
 
-//    _treeView->expandAll();
-//    if (isSubtask) {
-//        _treeView->expand(selectedIndex);
-//    }
+    if (isSubtask) {
+        _treeView->expand(selectedIndex);
+    }
 
-    /*const QModelIndex &parent = isSubtask ? selectedIndex : QModelIndex();
-    const QModelIndex &topLeft = _model->index(newTaskItem->row(), ID_INDEX, parent);
-    const QModelIndex &bottomRight = _model->index(newTaskItem->row(), COMMENTS_INDEX, parent);
-    _treeView->reset();
-    _treeView->expandAll();
+//    QItemSelection selection = _treeView->selectionModel()->selection();
+    // Unselected old task
+//    const QModelIndex &topLeft = _model->index(newTaskItem->row(), ID_INDEX, selectedIndex);
+//    const QModelIndex &bottomRight = _model->index(newTaskItem->row(), COMMENTS_INDEX, selectedIndex);
+//    selection.select(topLeft, bottomRight);
+//    _treeView->selectionModel()->select(selection, QItemSelectionModel::Deselect);
 
-    QItemSelection selection = _treeView->selectionModel()->selection();
-    selection.select(topLeft, bottomRight);
-    _treeView->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);*/
+    // Selected new task
+//    const QModelIndex &parent = isSubtask ? selectedIndex : QModelIndex();
+//    selection.select(_model->index(newTaskItem->row(), ID_INDEX, parent),
+//                     _model->index(newTaskItem->row(), COMMENTS_INDEX, parent));
+//    _treeView->selectionModel()->select(selection, QItemSelectionModel::Select);
 }
 
 void MainWindow::loadModelFromByFilePath(const QString &filePath) {

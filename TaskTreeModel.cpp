@@ -220,10 +220,6 @@ void TaskTreeModel::setModelData(QFile *file) {
         }
     }
 
-//    QVector<QVariant> newTask;
-//    newTask << QList<QVariant>({QVariant(99), QVariant(99), QVariant(98)});
-//    rootItem->appendChild(new TaskTreeItem(newTask, rootItem));
-//
     if (xmlReader.hasError()) {
         qDebug() << "Error read file:" << xmlReader.errorString();
     }
@@ -253,7 +249,7 @@ TaskTreeItem *TaskTreeModel::insertTask(int row, bool isSubTask, const QModelInd
         itemForAttach = itemForAttach->parentItem();
     }
 
-    QVector <QVariant> newTaskData;
+    QVector<QVariant> newTaskData;
 
     newTaskData << QList<QVariant>({QVariant(++nextUniqueId), QVariant(0), QVariant(0),
                                     QVariant("New task #" + QString::number(nextUniqueId))});
@@ -262,7 +258,7 @@ TaskTreeItem *TaskTreeModel::insertTask(int row, bool isSubTask, const QModelInd
     if (isSubTask) {
         beginInsertRows(parent, 0, 0);
     } else {
-        beginInsertRows(indexFromItem(itemForAttach), itemForAttach->childCount(), itemForAttach->childCount());
+        beginInsertRows(indexFromItem(itemForAttach), itemForAttach->childCount(), itemForAttach->childCount() - 1);
     }
 
     itemForAttach->appendChild(newTaskItem);
@@ -278,7 +274,7 @@ QModelIndex TaskTreeModel::indexFromItem(TaskTreeItem *item) {
     }
 
     TaskTreeItem *parent = item->parentItem();
-    QList < TaskTreeItem * > parents;
+    QList<TaskTreeItem *> parents;
     while (parent && parent != rootItem) {
         parents << parent;
         parent = parent->parentItem();
