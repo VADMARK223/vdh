@@ -63,29 +63,29 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     setCentralWidget(splitter);
 
     connect(_treeView->selectionModel(),
-            SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
             this,
-            SLOT(onSelectionChanged(QItemSelection,QItemSelection)));
+            SLOT(onSelectionChanged(QItemSelection, QItemSelection)));
 
     connect(_treeView->selectionModel(),
-            SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+            SIGNAL(currentChanged(QModelIndex, QModelIndex)),
             this,
-            SLOT(onCurrentChanged(QModelIndex,QModelIndex)));
+            SLOT(onCurrentChanged(QModelIndex, QModelIndex)));
 
     connect(_treeView->model(),
-            SIGNAL(dataChanged(QModelIndex,QModelIndex,QList<int>)),
+            SIGNAL(dataChanged(QModelIndex, QModelIndex, QList<int>)),
             this,
-            SLOT(onDataChanged(QModelIndex,QModelIndex,QList<int>)));
+            SLOT(onDataChanged(QModelIndex, QModelIndex, QList<int>)));
 
     connect(_treeView->model(),
-            SIGNAL(rowsInserted(QModelIndex,int,int)),
+            SIGNAL(rowsInserted(QModelIndex, int, int)),
             this,
-            SLOT(onRowsInserted(QModelIndex,int,int)));
+            SLOT(onRowsInserted(QModelIndex, int, int)));
 
     connect(_treeView->model(),
-            SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)),
+            SIGNAL(rowsAboutToBeInserted(QModelIndex, int, int)),
             this,
-            SLOT(onRowsAboutToBeInserted(QModelIndex,int,int)));
+            SLOT(onRowsAboutToBeInserted(QModelIndex, int, int)));
 
 
     connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
@@ -204,8 +204,9 @@ void MainWindow::loadModelFromByFilePath(const QString &filePath) {
     if (!_treeView->selectionModel()->hasSelection()) {
         // Selected first row
         const QModelIndex &parent = QModelIndex();
-        const QModelIndex &topLeft = _model->index(0, ID_INDEX, parent);
-        const QModelIndex &bottomRight = _model->index(0, COMMENTS_INDEX, parent);
+        const QModelIndex &topLeft = _model->index(0, 0, parent);
+        const QModelIndex &bottomRight = _model->index(0, static_cast<int>(ColumnsData::getColumns().size()) - 1,
+                                                       parent);
         QItemSelection selection = _treeView->selectionModel()->selection();
         selection.select(topLeft, bottomRight);
         _treeView->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);

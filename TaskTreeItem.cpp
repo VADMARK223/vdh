@@ -3,6 +3,7 @@
 //
 
 #include "TaskTreeItem.h"
+#include "ColumnsData.h"
 
 TaskTreeItem::TaskTreeItem(const QVector<QVariant> &data, TaskTreeItem *parentItem)
         : _itemData(data), _parentItem(parentItem) {
@@ -57,18 +58,18 @@ int TaskTreeItem::row() const {
     qTextStream << this;
 
     return "TaskTreeItem(" +
-           this->data(ID_INDEX).toString() + "," +
-           this->data(DEPTH_INDEX).toString() + "," +
+           this->data(ColumnsData::getIndexByAlias(ID_ALIAS)).toString() + "," +
+           this->data(ColumnsData::getIndexByAlias(DEPTH_ALIAS)).toString() + "," +
             addressString +
            ")";
 }
 
 int TaskTreeItem::getId() const {
-    return this->data(ID_INDEX).toInt();
+    return this->data(ColumnsData::getIndexByAlias(ID_ALIAS)).toInt();
 }
 
 int TaskTreeItem::getParentId() const {
-    return this->data(PARENT_ID_INDEX).toInt();
+    return this->data(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS)).toInt();
 }
 
 QVector<QVariant> TaskTreeItem::getItemData() {

@@ -69,7 +69,7 @@ Qt::ItemFlags TaskTreeModel::flags(const QModelIndex &index) const {
 
 //    index.column() == ID_INDEX
 
-    if (index.column() == COMMENTS_INDEX) {
+    if (index.column() == ColumnsData::getIndexByAlias(COMMENTS_ALIAS)) {
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
     } else {
         return QAbstractItemModel::flags(index);
@@ -177,10 +177,10 @@ void TaskTreeModel::setModelData(QFile *file) {
                     // Find parent
                     for (const auto &i: dataList) {
                         auto &data = const_cast<QVector<QVariant> &>(i);
-                        int currentId = data.at(ID_INDEX).value<int>();
-                        int parentDepth = data.at(DEPTH_INDEX).value<int>();
+                        int currentId = data.at(ColumnsData::getIndexByAlias(ID_ALIAS)).value<int>();
+                        int parentDepth = data.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS)).value<int>();
                         if (currentId == parentId) {
-                            auto &depth = const_cast<QVariant &>(newData.at(DEPTH_INDEX));
+                            auto &depth = const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS)));
                             depth.setValue(++parentDepth);
                         }
                     }
@@ -201,14 +201,14 @@ void TaskTreeModel::setModelData(QFile *file) {
             parents.last()->appendChild(newItem);
             parents << newItem;
         } else {
-            int depth = data.at(DEPTH_INDEX).value<int>();
-            int parentId = data.at(PARENT_ID_INDEX).value<int>();
+            int depth = data.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS)).value<int>();
+            int parentId = data.at(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS)).value<int>();
 
             TaskTreeItem *parentItem = nullptr;
             for (auto parent: parents) {
                 auto *&pParent = const_cast<TaskTreeItem *&>(parent);
-                if ((depth - 1) == pParent->data(DEPTH_INDEX).value<int>()
-                    && pParent->data(ID_INDEX).value<int>() == parentId) {
+                if ((depth - 1) == pParent->data(ColumnsData::getIndexByAlias(DEPTH_ALIAS)).value<int>()
+                    && pParent->data(ColumnsData::getIndexByAlias(ID_ALIAS)).value<int>() == parentId) {
                     parentItem = pParent;
                 }
             }
