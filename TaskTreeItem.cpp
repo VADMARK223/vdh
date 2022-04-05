@@ -17,6 +17,10 @@ void TaskTreeItem::appendChild(TaskTreeItem *item) {
     _childItems.append(item);
 }
 
+void TaskTreeItem::appendChildAtRow(int row, TaskTreeItem *item) {
+    _childItems.insert(row, item);
+}
+
 void TaskTreeItem::removeChildren() {
     _childItems.clear();
 }

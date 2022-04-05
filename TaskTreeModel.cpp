@@ -279,11 +279,11 @@ TaskTreeItem *TaskTreeModel::insertTask([[maybe_unused]] int row, bool isSubTask
 
     if (isSubTask) {
         beginInsertRows(parent, 0, 0);
+        itemForAttach->appendChild(newTaskItem);
     } else {
         beginInsertRows(indexFromItem(itemForAttach), itemForAttach->childCount(), itemForAttach->childCount() - 1);
+        itemForAttach->appendChildAtRow(row + 1, newTaskItem);
     }
-
-    itemForAttach->appendChild(newTaskItem);
 
     endInsertRows();
 

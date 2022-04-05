@@ -234,6 +234,13 @@ QMenuBar *MainWindow::createMenuBar() {
     fileMenu->addSeparator();
     fileMenu->addAction("E&xit", this, SLOT(close()), tr("Alt+F4"));
 
+    auto *newTaskMenu = new QMenu("&New Task");
+    newTaskMenu->addAction(QPixmap(":images/add.png"), "New Task Below Selected Task", this,
+                           [this] { addTaskAction(false); }, tr("Ctrl+N"));
+    newTaskMenu->addSeparator();
+    newTaskMenu->addAction(QPixmap(":images/add-sub.png"), "New Subtask at Bottom of Selected Task", this,
+                           [this] { addTaskAction(true); }, tr("Ctrl+Shift+N"));
+
     auto *editMenu = new QMenu("&Edit");
     editMenu->addAction(QPixmap(":images/delete.png"), "&Delete Selected Task", this, SLOT(deleteTaskAction()),
                         tr("Delete"));
@@ -245,6 +252,7 @@ QMenuBar *MainWindow::createMenuBar() {
     helpMenu->addAction("&About vdh");
 
     menuBar->addMenu(fileMenu);
+    menuBar->addMenu(newTaskMenu);
     menuBar->addMenu(editMenu);
     menuBar->addMenu(toolsMenu);
     menuBar->addMenu(helpMenu);
@@ -258,9 +266,6 @@ QToolBar *MainWindow::createToolBar() {
     toolBar->addAction(QPixmap(":images/save.png"), "Save Tasklist", this, SLOT(saveAction()));
     toolBar->addSeparator();
     toolBar->addAction(QPixmap(":images/add.png"), "New Task", this, [this] { addTaskAction(false); });
-//    QAction *pAction = toolBar->addAction(QPixmap(":images/add.png"), "New Task");
-//    connect(pAction, &QAction::triggered, this, [this] { addTaskAction(); });
-
     toolBar->addAction(QPixmap(":images/add-sub.png"), "New Subtask", this, [this] { addTaskAction(true); });
     toolBar->addSeparator();
     toolBar->addAction(QPixmap(":images/new.png"), "New Tasklist", this, SLOT(newFileAction()));

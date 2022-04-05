@@ -16,6 +16,8 @@ public:
 
     void appendChild(TaskTreeItem *item);
 
+    void appendChildAtRow(int row, TaskTreeItem *item);
+
     void removeChildren();
 
     void removeChildAtRow(int row);
