@@ -47,7 +47,6 @@ public:
     TaskTreeItem *insertTask([[maybe_unused]] int row, bool isSubTask, const QModelIndex &parent = QModelIndex());
 
     QModelIndex indexFromItem(TaskTreeItem *item);
-
 protected:
 
     TaskTreeItem *rootItem;

@@ -55,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             this,
             SLOT(onCurrentChanged(QModelIndex, QModelIndex)));
 
+
     connect(_treeView->model(),
             SIGNAL(dataChanged(QModelIndex, QModelIndex, QList<int>)),
             this,
@@ -70,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
             this,
             SLOT(onRowsAboutToBeInserted(QModelIndex, int, int)));
 
+    connect(_commentsPlainTextEdit, SIGNAL(textChanged()), this, SLOT(onCommentsTextChanged()));
 
     connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
 
@@ -270,7 +272,7 @@ void MainWindow::onSelectionChanged(const QItemSelection &selected, const QItemS
         qDebug() << "Selected is null.";
         return;
     }
-    qDebug() << "Selection change:" << selected << "deselected:" << deselected;
+//    qDebug() << "Selection change:" << selected << "deselected:" << deselected;
     auto &range = const_cast<QItemSelectionRange &>(selected.first());
     const QModelIndexList &list = range.indexes();
     auto &index = const_cast<QModelIndex &>(list.first());
@@ -289,7 +291,7 @@ void MainWindow::onDataChanged(const QModelIndex &topLeft, const QModelIndex &bo
 
 void MainWindow::onRowsInserted(const QModelIndex &parent, int first, int last) {
 //    auto *pTreeItem = static_cast<TaskTreeItem *>(parent.internalPointer());
-//    qDebug() << "Insert pTreeItem:" << pTreeItem->toString();
+//    qDebug() << "Insert pTreeItem:";
 }
 
 void MainWindow::onRowsAboutToBeInserted(const QModelIndex &parent, int first, int last) {
@@ -339,4 +341,10 @@ void MainWindow::selectRow(const int row, const QModelIndex &index) {
     QItemSelectionModel *selectionModel = _treeView->selectionModel();
     selectionModel->select(_model->index(row, 0, index),
                            QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+}
+
+void MainWindow::onCommentsTextChanged() {
+    const QModelIndexList &selectedIndexesList = _treeView->selectionModel()->selectedIndexes();
+    auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.at(ColumnsData::getIndexByAlias(COMMENTS_ALIAS)));
+    _model->setData(selectedIndex, QVariant(_commentsPlainTextEdit->toPlainText()), Qt::EditRole);
 }

@@ -51,17 +51,21 @@ public slots:
 
     void writeToFile();
 
+private slots:
+    void onCommentsTextChanged();
+
 protected:
 
     void closeEvent(QCloseEvent *event) override;
-private:
 
+private:
     QSettings *_settings = new QSettings("settings.ini", QSettings::IniFormat);
     QFile *_file = new QFile(this);
     QTreeView *_treeView = new QTreeView(this);
     QPlainTextEdit *_commentsPlainTextEdit = new QPlainTextEdit(this);
     TaskTreeModel *_model = new TaskTreeModel(this);
     QStatusBar *_statusBar = new QStatusBar(this);
+
     void loadSettings();
 
     void writeSettings();
@@ -73,8 +77,6 @@ private:
     QToolBar *createToolBar();
 
     void writeElement(QXmlStreamWriter &writer, TaskTreeItem *root);
-
-//    void selectRow(int row);
 };
 
 #endif //VDH_MAINWINDOW_H

@@ -248,6 +248,7 @@ TaskTreeItem *TaskTreeModel::getRootItem() {
 void TaskTreeModel::deleteTask(int row, const QModelIndex &parent) {
     auto *item = static_cast<TaskTreeItem *>(parent.internalPointer());
 
+
     // Remove children
     beginRemoveRows(parent, item->childCount(), item->childCount() - 1);
     item->removeChildren();
