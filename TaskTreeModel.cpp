@@ -169,8 +169,6 @@ void TaskTreeModel::setModelData(QFile *file) {
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(TITLE_ALIAS))).setValue(title);
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS))).setValue(parentId);
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS))).setValue(QVariant(0));
-                const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(COMMENTS_ALIAS))).setValue(
-                        "Old task #" + QString::number(id));
 
                 if (parentId) {
                     // Find parent
@@ -187,6 +185,13 @@ void TaskTreeModel::setModelData(QFile *file) {
 
                 // Add new data in collection
                 dataList << newData;
+            }
+
+            if (xmlReader.name() == tr(COMMENTS_ALIAS)) {
+                const QString &commentsValue = xmlReader.readElementText();
+                QVector<QVariant> &last = dataList.last();
+                auto &commentsVariant = const_cast<QVariant &>(last.at(ColumnsData::getIndexByAlias(COMMENTS_ALIAS)));
+                commentsVariant.setValue(commentsValue);
             }
         }
     }

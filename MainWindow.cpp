@@ -266,6 +266,9 @@ void MainWindow::writeElement(QXmlStreamWriter &writer, TaskTreeItem *root) {
         writer.writeAttribute(ID_ALIAS, QString::number(child->getId()));
         writer.writeAttribute(TITLE_ALIAS, child->getTitle());
         writer.writeAttribute(PARENT_ID_ALIAS, QString::number(child->getParentId()));
+        if (!child->getComments().isEmpty()) {
+            writer.writeTextElement(COMMENTS_ALIAS, child->getComments());
+        }
 
         if (child->childCount()) {
             writeElement(writer, child);
