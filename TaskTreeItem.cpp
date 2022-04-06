@@ -85,6 +85,10 @@ int TaskTreeItem::getParentId() const {
     return this->data(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS)).toInt();
 }
 
+int TaskTreeItem::getPriority() const {
+    return this->data(ColumnsData::getIndexByAlias(PRIORITY_ALIAS)).toInt();
+}
+
 QString TaskTreeItem::getTitle() const {
     return this->data(ColumnsData::getIndexByAlias(TITLE_ALIAS)).toString();
 }

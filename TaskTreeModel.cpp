@@ -163,12 +163,14 @@ void TaskTreeModel::setModelData(QFile *file) {
                 int id = xmlReader.attributes().value(ID_ALIAS).toInt();
                 QString title = xmlReader.attributes().value(TITLE_ALIAS).toString();
                 int parentId = xmlReader.attributes().value(PARENT_ID_ALIAS).toInt();
+                int priority = xmlReader.attributes().value(PRIORITY_ALIAS).toInt();
 
                 QVector<QVariant> newData(QVector<QVariant>(ColumnsData::getColumns().size()));
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(ID_ALIAS))).setValue(id);
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(TITLE_ALIAS))).setValue(title);
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS))).setValue(parentId);
-                const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS))).setValue(QVariant(0));
+                const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS))).setValue(0);
+                const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PRIORITY_ALIAS))).setValue(priority);
 
                 if (parentId) {
                     // Find parent
@@ -278,6 +280,7 @@ TaskTreeItem *TaskTreeModel::insertTask([[maybe_unused]] int row, bool isSubTask
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(TITLE_ALIAS))).setValue(QString("Task"));
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS))).setValue(itemForAttach->getId());
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS))).setValue(0);
+    const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PRIORITY_ALIAS))).setValue(DEFAULT_PRIORITY);
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(COMMENTS_ALIAS))).setValue(
             "New task #" + QString::number(nextUniqueId));
 

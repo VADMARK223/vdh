@@ -10,10 +10,13 @@
 
 #define TITLE_ALIAS "TITLE"
 #define ID_ALIAS "ID"
+#define PRIORITY_ALIAS "PRIORITY"
 #define PARENT_ID_ALIAS "P"
 #define DEPTH_ALIAS "DEPTH_ALIAS"
 #define COMMENTS_ALIAS "COMMENTS"
 #define TASK_ALIAS "TASK"
+
+#define DEFAULT_PRIORITY 5
 
 struct COLUMN {
     int index;

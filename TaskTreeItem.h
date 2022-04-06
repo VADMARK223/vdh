@@ -40,6 +40,8 @@ public:
 
     [[nodiscard]] int getParentId() const;
 
+    [[nodiscard]] int getPriority() const;
+
     [[nodiscard]] QString getTitle() const;
 
     [[nodiscard]] QString getComments() const;

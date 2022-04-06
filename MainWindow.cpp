@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     auto *depthDelegate = new DepthDelegate();
     _treeView->setItemDelegateForColumn(ColumnsData::getIndexByAlias(DEPTH_ALIAS), depthDelegate);
 
-    _commentsPlainTextEdit->setMaximumWidth(300);
+    _commentsPlainTextEdit->setMaximumWidth(200);
     auto *closeButton = new QPushButton("Close");
     closeButton->setFixedWidth(50);
 
@@ -266,6 +266,7 @@ void MainWindow::writeElement(QXmlStreamWriter &writer, TaskTreeItem *root) {
         writer.writeAttribute(ID_ALIAS, QString::number(child->getId()));
         writer.writeAttribute(TITLE_ALIAS, child->getTitle());
         writer.writeAttribute(PARENT_ID_ALIAS, QString::number(child->getParentId()));
+        writer.writeAttribute(PRIORITY_ALIAS, QString::number(child->getPriority()));
         if (!child->getComments().isEmpty()) {
             writer.writeTextElement(COMMENTS_ALIAS, child->getComments());
         }
