@@ -159,7 +159,7 @@ void TaskTreeModel::setModelData(QFile *file) {
                 nextUniqueId = xmlReader.attributes().value("NEXTUNIQUEID").toInt() - 1;
             }
 
-            if (xmlReader.name() == tr("TASK")) {
+            if (xmlReader.name() == tr(TASK_ALIAS)) {
                 int id = xmlReader.attributes().value(ID_ALIAS).toInt();
                 QString title = xmlReader.attributes().value(TITLE_ALIAS).toString();
                 int parentId = xmlReader.attributes().value(PARENT_ID_ALIAS).toInt();

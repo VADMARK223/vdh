@@ -13,6 +13,7 @@
 #define PARENT_ID_ALIAS "P"
 #define DEPTH_ALIAS "DEPTH_ALIAS"
 #define COMMENTS_ALIAS "COMMENTS_ALIAS"
+#define TASK_ALIAS "TASK"
 
 struct COLUMN {
     int index;

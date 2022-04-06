@@ -14,8 +14,6 @@
 #include <QProgressBar>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-//    loadSettings();
-
     setMenuBar(createMenuBar());
     addToolBar(createToolBar());
 
@@ -28,8 +26,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     _treeView->setHeaderHidden(false);
     _treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     _treeView->setSortingEnabled(false);
-
-    loadSettings();
 
     auto *closeButton = new QPushButton("Close");
 
@@ -76,6 +72,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 
     connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
+
+    loadSettings();
 }
 
 void MainWindow::newFileAction() {
@@ -108,21 +106,7 @@ void MainWindow::saveAction() {
         return;
     }
 
-    if (!_file->open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QMessageBox::warning(this, "Error file", "Failed to open file: '" + _file->fileName() + "'.", QMessageBox::Ok);
-        _file->close();
-        return;
-    }
-
-    QXmlStreamWriter writer;
-    writer.setDevice(_file);
-    writer.setAutoFormatting(true);
-    writer.writeStartDocument();
-    writer.writeStartElement("TODOLIST");
-    writer.writeAttribute("NEXTUNIQUEID", QString::number(_model->nextUniqueId + 1));
-    writeElement(writer, _model->getRootItem());
-    writer.writeEndDocument();
-    _file->close();
+    writeToFile();
 }
 
 void MainWindow::onSaveFileAs() {
@@ -135,8 +119,12 @@ void MainWindow::onSaveFileAs() {
 
     _file->setFileName(filePath);
 
+    writeToFile();
+}
+
+void MainWindow::writeToFile() {
     if (!_file->open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
+        QMessageBox::warning(this, "Error file", "Failed to open file: '" + _file->fileName() + "'.", QMessageBox::Ok);
         _file->close();
         return;
     }
@@ -160,24 +148,14 @@ void MainWindow::addTaskAction(bool isSubtask) {
     }
     const QModelIndexList &selectedIndexesList = _treeView->selectionModel()->selectedIndexes();
     auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.first());
-    /*TaskTreeItem *newTaskItem =*/ _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
+    TaskTreeItem *newTaskItem = _model->insertTask(selectedIndex.row(), isSubtask, selectedIndex);
 
     if (isSubtask) {
         _treeView->expand(selectedIndex);
+        selectRow(newTaskItem->row(), selectedIndex);
+    } else {
+        selectRow(newTaskItem->row(), selectedIndex.parent());
     }
-
-//    QItemSelection selection = _treeView->selectionModel()->selection();
-    // Unselected old task
-//    const QModelIndex &topLeft = _model->index(newTaskItem->row(), ID_INDEX, selectedIndex);
-//    const QModelIndex &bottomRight = _model->index(newTaskItem->row(), COMMENTS_INDEX, selectedIndex);
-//    selection.select(topLeft, bottomRight);
-//    _treeView->selectionModel()->select(selection, QItemSelectionModel::Deselect);
-
-    // Selected new task
-//    const QModelIndex &parent = isSubtask ? selectedIndex : QModelIndex();
-//    selection.select(_model->index(newTaskItem->row(), ID_INDEX, parent),
-//                     _model->index(newTaskItem->row(), COMMENTS_INDEX, parent));
-//    _treeView->selectionModel()->select(selection, QItemSelectionModel::Select);
 }
 
 void MainWindow::loadModelFromByFilePath(const QString &filePath) {
@@ -195,26 +173,17 @@ void MainWindow::loadModelFromByFilePath(const QString &filePath) {
         return;
     }
 
-
     if (!_file->open(QIODevice::ReadOnly | QIODevice::Text)) {
         QMessageBox::warning(this, "Error file", "Failed to open file: '" + filePath + "'.", QMessageBox::Ok);
         _file->close();
         return;
     }
 
-//    _treeView->reset();
     _model->setModelData(_file);
     _treeView->expandAll();
 
     if (!_treeView->selectionModel()->hasSelection()) {
-        // Selected first row
-        const QModelIndex &parent = QModelIndex();
-        const QModelIndex &topLeft = _model->index(0, 0, parent);
-        const QModelIndex &bottomRight = _model->index(0, static_cast<int>(ColumnsData::getColumns().size()) - 1,
-                                                       parent);
-        QItemSelection selection = _treeView->selectionModel()->selection();
-        selection.select(topLeft, bottomRight);
-        _treeView->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+        selectRow(0, _model->indexFromItem(_model->getRootItem()));
     }
 
     _file->close();
@@ -275,10 +244,13 @@ QToolBar *MainWindow::createToolBar() {
     return toolBar;
 }
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "misc-no-recursion"
+
 void MainWindow::writeElement(QXmlStreamWriter &writer, TaskTreeItem *root) {
     for (int i = 0; i < root->childCount(); ++i) {
         TaskTreeItem *child = root->child(i);
-        writer.writeStartElement("TASK");
+        writer.writeStartElement(TASK_ALIAS);
         writer.writeAttribute(ID_ALIAS, QString::number(child->getId()));
         writer.writeAttribute(TITLE_ALIAS, child->getTitle());
         writer.writeAttribute(PARENT_ID_ALIAS, QString::number(child->getParentId()));
@@ -291,16 +263,18 @@ void MainWindow::writeElement(QXmlStreamWriter &writer, TaskTreeItem *root) {
     }
 }
 
+#pragma clang diagnostic pop
+
 void MainWindow::onSelectionChanged(const QItemSelection &selected, const QItemSelection &deselected) {
-    qDebug() << "Selection change selected:" << selected << "deselected:" << deselected;
+    if (selected.isEmpty()) {
+        qDebug() << "Selected is null.";
+        return;
+    }
+    qDebug() << "Selection change:" << selected << "deselected:" << deselected;
     auto &range = const_cast<QItemSelectionRange &>(selected.first());
-    qDebug() << "range:" << range;
     const QModelIndexList &list = range.indexes();
-    qDebug() << "list:" << list;
     auto &index = const_cast<QModelIndex &>(list.first());
-    qDebug() << "index:" << index;
     auto *itemForAttach = static_cast<TaskTreeItem *>(index.internalPointer());
-    qDebug() << "item:" << itemForAttach->toString();
     _commentsPlainTextEdit->setPlainText(itemForAttach->getComments());
 }
 
@@ -359,4 +333,10 @@ void MainWindow::writeSettings() {
     _settings->beginGroup("Preferences");
     _settings->setValue("fileName", _file->fileName());
     _settings->endGroup();
+}
+
+void MainWindow::selectRow(const int row, const QModelIndex &index) {
+    QItemSelectionModel *selectionModel = _treeView->selectionModel();
+    selectionModel->select(_model->index(row, 0, index),
+                           QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 }

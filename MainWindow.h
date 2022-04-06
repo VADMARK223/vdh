@@ -49,26 +49,32 @@ public slots:
 
     void saveAction();
 
-protected:
-    void closeEvent(QCloseEvent *event) override;
+    void writeToFile();
 
+protected:
+
+    void closeEvent(QCloseEvent *event) override;
 private:
+
     QSettings *_settings = new QSettings("settings.ini", QSettings::IniFormat);
     QFile *_file = new QFile(this);
     QTreeView *_treeView = new QTreeView(this);
     QPlainTextEdit *_commentsPlainTextEdit = new QPlainTextEdit(this);
     TaskTreeModel *_model = new TaskTreeModel(this);
     QStatusBar *_statusBar = new QStatusBar(this);
-
     void loadSettings();
 
     void writeSettings();
 
     QMenuBar *createMenuBar();
 
+    void selectRow(int row, const QModelIndex &index);
+
     QToolBar *createToolBar();
 
     void writeElement(QXmlStreamWriter &writer, TaskTreeItem *root);
+
+//    void selectRow(int row);
 };
 
 #endif //VDH_MAINWINDOW_H
