@@ -11,7 +11,7 @@ const QVector<COLUMN> ColumnsData::_columns = [] { // NOLINT(cert-err58-cpp)
     result << createColumn(static_cast<int>(result.size()), TITLE_ALIAS, "Title", 150, false);
     result << createColumn(static_cast<int>(result.size()), ID_ALIAS, "ID", 30, false);
     result << createColumn(static_cast<int>(result.size()), PARENT_ID_ALIAS, "Parent ID", 60, false);
-    result << createColumn(static_cast<int>(result.size()), DEPTH_ALIAS, "Depth", 50, false);
+    result << createColumn(static_cast<int>(result.size()), DEPTH_ALIAS, "Depth", 150, false);
     result << createColumn(static_cast<int>(result.size()), COMMENTS_ALIAS, "Comments", 50, false);
 
     return result;

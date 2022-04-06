@@ -62,7 +62,7 @@ Qt::ItemFlags TaskTreeModel::flags(const QModelIndex &index) const {
         return Qt::NoItemFlags;
     }
 
-    if (index.column() == ColumnsData::getIndexByAlias(TITLE_ALIAS)) {
+    if (index.column() == ColumnsData::getIndexByAlias(TITLE_ALIAS) || index.column() == ColumnsData::getIndexByAlias(DEPTH_ALIAS)) {
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
     } else {
         return QAbstractItemModel::flags(index);

@@ -4,6 +4,7 @@
 
 #include "MainWindow.h"
 #include "ColumnsData.h"
+#include "DepthDelegate.h"
 #include <QMenuBar>
 #include <QFile>
 #include <QSplitter>
@@ -27,7 +28,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     _treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     _treeView->setSortingEnabled(false);
 
+    auto *starDelegate = new DepthDelegate();
+    _treeView->setItemDelegateForColumn(ColumnsData::getIndexByAlias(DEPTH_ALIAS), starDelegate);
+
+    _commentsPlainTextEdit->setMaximumWidth(300);
     auto *closeButton = new QPushButton("Close");
+    closeButton->setFixedWidth(50);
 
     auto *splitter = new QSplitter;
     splitter->addWidget(_treeView);
@@ -345,6 +351,7 @@ void MainWindow::selectRow(const int row, const QModelIndex &index) {
 
 void MainWindow::onCommentsTextChanged() {
     const QModelIndexList &selectedIndexesList = _treeView->selectionModel()->selectedIndexes();
-    auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.at(ColumnsData::getIndexByAlias(COMMENTS_ALIAS)));
+    auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.at(
+            ColumnsData::getIndexByAlias(COMMENTS_ALIAS)));
     _model->setData(selectedIndex, QVariant(_commentsPlainTextEdit->toPlainText()), Qt::EditRole);
 }

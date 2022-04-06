@@ -15,7 +15,7 @@ find_package(Qt6 COMPONENTS
         Test
         REQUIRED)
 
-add_executable(vdh WIN32 main.cpp resources/resources.qrc TaskTreeModel.cpp TaskTreeModel.h TaskTreeItem.cpp TaskTreeItem.h MainWindow.cpp MainWindow.h ColumnsData.cpp ColumnsData.h)
+add_executable(vdh WIN32 main.cpp resources/resources.qrc TaskTreeModel.cpp TaskTreeModel.h TaskTreeItem.cpp TaskTreeItem.h MainWindow.cpp MainWindow.h ColumnsData.cpp ColumnsData.h DepthDelegate.cpp DepthDelegate.h)
 target_link_libraries(vdh
         Qt::Core
         Qt::Gui
