@@ -7,6 +7,7 @@
 #include "delegate/DepthDelegate.h"
 #include "delegate/title/TitleDelegate.h"
 #include "delegate/StarDelegate.h"
+#include "delegate/title/TitleEditor.h"
 #include <QMenuBar>
 #include <QFile>
 #include <QSplitter>
@@ -29,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     _treeView->setHeaderHidden(false);
     _treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     _treeView->setSortingEnabled(false);
+    _treeView->setEditTriggers(_treeView->DoubleClicked);
 
     _treeView->setItemDelegateForColumn(ColumnsData::getIndexByAlias(TITLE_ALIAS), new TitleDelegate());
 
@@ -46,7 +48,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     splitter->addWidget(_treeView);
     splitter->addWidget(_commentsPlainTextEdit);
     splitter->addWidget(closeButton);
-    splitter->show();
 
     _treeView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     for (const auto &column: ColumnsData::getColumns()) {
