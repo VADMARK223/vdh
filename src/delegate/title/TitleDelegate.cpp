@@ -3,9 +3,10 @@
 //
 
 #include "TitleDelegate.h"
-#include "../data/TitleData.h"
+#include "../../data/TitleData.h"
 #include <QLineEdit>
 #include <QApplication>
+#include <QPainter>
 
 void TitleDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     QStyleOptionViewItem opt = option;
