@@ -6,6 +6,7 @@
 #include "ColumnsData.h"
 #include "DepthDelegate.h"
 #include "TitleDelegate.h"
+#include "StarDelegate.h"
 #include <QMenuBar>
 #include <QFile>
 #include <QSplitter>
@@ -34,6 +35,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     auto *depthDelegate = new DepthDelegate();
     _treeView->setItemDelegateForColumn(ColumnsData::getIndexByAlias(DEPTH_ALIAS), depthDelegate);
+
+    auto *starDelegate = new StarDelegate();
+    _treeView->setItemDelegateForColumn(ColumnsData::getIndexByAlias(STAR_ALIAS), starDelegate);
 
     _commentsPlainTextEdit->setMaximumWidth(200);
     auto *closeButton = new QPushButton("Close");

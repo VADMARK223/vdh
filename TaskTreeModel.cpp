@@ -62,7 +62,9 @@ Qt::ItemFlags TaskTreeModel::flags(const QModelIndex &index) const {
         return Qt::NoItemFlags;
     }
 
-    if (index.column() == ColumnsData::getIndexByAlias(TITLE_ALIAS) || index.column() == ColumnsData::getIndexByAlias(DEPTH_ALIAS)) {
+    if (index.column() == ColumnsData::getIndexByAlias(TITLE_ALIAS) ||
+        index.column() == ColumnsData::getIndexByAlias(DEPTH_ALIAS) ||
+            index.column() == ColumnsData::getIndexByAlias(STAR_ALIAS)) {
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
     } else {
         return QAbstractItemModel::flags(index);
@@ -164,6 +166,7 @@ void TaskTreeModel::setModelData(QFile *file) {
                 QString title = xmlReader.attributes().value(TITLE_ALIAS).toString();
                 int parentId = xmlReader.attributes().value(PARENT_ID_ALIAS).toInt();
                 int priority = xmlReader.attributes().value(PRIORITY_ALIAS).toInt();
+                int star = xmlReader.attributes().value(STAR_ALIAS).toInt();
 
                 QVector<QVariant> newData(QVector<QVariant>(ColumnsData::getColumns().size()));
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(ID_ALIAS))).setValue(id);
@@ -171,6 +174,7 @@ void TaskTreeModel::setModelData(QFile *file) {
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS))).setValue(parentId);
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS))).setValue(0);
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PRIORITY_ALIAS))).setValue(priority);
+                const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(STAR_ALIAS))).setValue(star);
 
                 if (parentId) {
                     // Find parent
