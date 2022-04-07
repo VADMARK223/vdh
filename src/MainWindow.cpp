@@ -30,8 +30,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     _treeView->setSelectionMode(QAbstractItemView::SingleSelection);
     _treeView->setSortingEnabled(false);
 
-    auto *titleDelegate = new TitleDelegate();
-    _treeView->setItemDelegateForColumn(ColumnsData::getIndexByAlias(TITLE_ALIAS), titleDelegate);
+    _treeView->setItemDelegateForColumn(ColumnsData::getIndexByAlias(TITLE_ALIAS), new TitleDelegate());
 
     auto *depthDelegate = new DepthDelegate();
     _treeView->setItemDelegateForColumn(ColumnsData::getIndexByAlias(DEPTH_ALIAS), depthDelegate);
@@ -271,6 +270,7 @@ void MainWindow::writeElement(QXmlStreamWriter &writer, TaskTreeItem *root) {
         writer.writeAttribute(TITLE_ALIAS, child->getTitle());
         writer.writeAttribute(PARENT_ID_ALIAS, QString::number(child->getParentId()));
         writer.writeAttribute(PRIORITY_ALIAS, QString::number(child->getPriority()));
+        writer.writeAttribute(STAR_ALIAS, QString::number(child->getStar()));
         if (!child->getComments().isEmpty()) {
             writer.writeTextElement(COMMENTS_ALIAS, child->getComments());
         }

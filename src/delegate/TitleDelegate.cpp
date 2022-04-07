@@ -3,11 +3,34 @@
 //
 
 #include "TitleDelegate.h"
+#include "../data/TitleData.h"
 #include <QLineEdit>
 #include <QApplication>
 
 void TitleDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    QStyledItemDelegate::paint(painter, option, index);
+    QStyleOptionViewItem opt = option;
+    initStyleOption(&opt, index);
+
+    QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
+
+    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
+
+    if (index.data().canConvert<TitleData>()) {
+        auto titleData = qvariant_cast<TitleData>(index.data());
+        style->drawItemText(painter,
+                            option.rect,
+                            Qt::AlignVCenter,
+                            QApplication::palette(),
+                            true,
+                            titleData.getTitle(),
+                            option.state & QStyle::State_Selected ? QPalette::HighlightedText
+                                                                  : QPalette::Text);
+    } else {
+        style->drawItemText(painter, option.rect, Qt::AlignVCenter, QApplication::palette(), true,
+                            index.data().toString(),
+                            option.state & QStyle::State_Selected ? QPalette::HighlightedText
+                                                                  : QPalette::Text);
+    }
 }
 
 QWidget *
@@ -18,10 +41,19 @@ TitleDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
 }
 
 void TitleDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const {
-    auto *lineEdit = dynamic_cast<QLineEdit*>(editor);
-    lineEdit->setText(index.data().toString());
+    auto *lineEdit = dynamic_cast<QLineEdit *>(editor);
+    if (index.data().canConvert<TitleData>()) {
+        auto titleData = qvariant_cast<TitleData>(index.data());
+        lineEdit->setText(titleData.getTitle());
+    }
 }
 
 void TitleDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const {
-    QStyledItemDelegate::setModelData(editor, model, index);
+    auto *lineEdit = dynamic_cast<QLineEdit *>(editor);
+
+    if (index.data().canConvert<TitleData>()) {
+        auto titleData = qvariant_cast<TitleData>(index.data());
+        titleData.setTitle(lineEdit->text());
+        model->setData(index, QVariant::fromValue(titleData));
+    }
 }

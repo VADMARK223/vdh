@@ -4,6 +4,7 @@
 
 #include "TaskTreeItem.h"
 #include "ColumnsData.h"
+#include "data/TitleData.h"
 
 TaskTreeItem::TaskTreeItem(const QVector<QVariant> &data, TaskTreeItem *parentItem)
         : _itemData(data), _parentItem(parentItem) {
@@ -89,8 +90,13 @@ int TaskTreeItem::getPriority() const {
     return this->data(ColumnsData::getIndexByAlias(PRIORITY_ALIAS)).toInt();
 }
 
+int TaskTreeItem::getStar() const {
+    return this->data(ColumnsData::getIndexByAlias(STAR_ALIAS)).toInt();
+}
+
 QString TaskTreeItem::getTitle() const {
-    return this->data(ColumnsData::getIndexByAlias(TITLE_ALIAS)).toString();
+    auto titleData = qvariant_cast<TitleData>(this->data(ColumnsData::getIndexByAlias(TITLE_ALIAS)));
+    return titleData.getTitle();
 }
 
 QString TaskTreeItem::getComments() const {
