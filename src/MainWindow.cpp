@@ -4,9 +4,9 @@
 
 #include "MainWindow.h"
 #include "ColumnsData.h"
-#include "DepthDelegate.h"
-#include "TitleDelegate.h"
-#include "StarDelegate.h"
+#include "delegate/DepthDelegate.h"
+#include "delegate/TitleDelegate.h"
+#include "delegate/StarDelegate.h"
 #include <QMenuBar>
 #include <QFile>
 #include <QSplitter>
