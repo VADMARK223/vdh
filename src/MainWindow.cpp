@@ -8,6 +8,7 @@
 #include "delegate/title/TitleDelegate.h"
 #include "delegate/StarDelegate.h"
 #include "delegate/title/TitleEditor.h"
+#include "data/TitleData.h"
 #include <QMenuBar>
 #include <QFile>
 #include <QSplitter>
@@ -367,7 +368,14 @@ void MainWindow::selectRow(const int row, const QModelIndex &index) {
 
 void MainWindow::onCommentsTextChanged() {
     const QModelIndexList &selectedIndexesList = _treeView->selectionModel()->selectedIndexes();
-    auto &selectedIndex = const_cast<QModelIndex &>(selectedIndexesList.at(
-            ColumnsData::getIndexByAlias(COMMENTS_ALIAS)));
-    _model->setData(selectedIndex, QVariant(_commentsPlainTextEdit->toPlainText()), Qt::EditRole);
+
+    auto &selectedTitleIndex = const_cast<QModelIndex &>(selectedIndexesList.at(
+            ColumnsData::getIndexByAlias(TITLE_ALIAS)));
+
+    if (selectedTitleIndex.data().canConvert<TitleData>()) {
+        auto titleData = qvariant_cast<TitleData>(selectedTitleIndex.data());
+        titleData.setComments(_commentsPlainTextEdit->toPlainText());
+        _model->setData(selectedTitleIndex, QVariant::fromValue(titleData), Qt::EditRole);
+    }
+
 }

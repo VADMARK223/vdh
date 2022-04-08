@@ -29,23 +29,30 @@ void TitleDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
         QFontMetrics metrics(opt.font);
         int titleWidth = metrics.horizontalAdvance(title);
         style->drawItemText(painter,
-                            QRect(opt.rect.x() + titleShift, opt.rect.y(), opt.rect.width() - titleShift, opt.rect.height()),
+                            QRect(opt.rect.x() + titleShift, opt.rect.y(), opt.rect.width() - titleShift,
+                                  opt.rect.height()),
                             Qt::AlignVCenter,
                             QApplication::palette(),
                             true,
                             title,
                             option.state & QStyle::State_Selected ? QPalette::HighlightedText
                                                                   : QPalette::Text);
-        const int spacing = 5;
-        const int commentShift = titleShift + titleWidth + spacing;
-        style->drawItemText(painter,
-                            QRect(opt.rect.x() + commentShift, opt.rect.y(), opt.rect.width() - commentShift, opt.rect.height()),
-                            Qt::AlignVCenter,
-                            QApplication::palette(),
-                            true,
-                            "Test comment",
-                            option.state & QStyle::State_Selected ? QPalette::HighlightedText
-                                                                  : QPalette::Mid);
+
+        QString comments = titleData.getComments();
+        if (!comments.isEmpty()) {
+            const int spacing = 5;
+            const int commentShift = titleShift + titleWidth + spacing;
+
+            style->drawItemText(painter,
+                                QRect(opt.rect.x() + commentShift, opt.rect.y(), opt.rect.width() - commentShift,
+                                      opt.rect.height()),
+                                Qt::AlignVCenter,
+                                QApplication::palette(),
+                                true,
+                                comments.replace(QChar('\n'), QChar(' ')),
+                                option.state & QStyle::State_Selected ? QPalette::HighlightedText
+                                                                      : QPalette::Mid);
+        }
 
         QStyleOptionButton cbOpt;
         cbOpt.rect = QRect(option.rect.x(), option.rect.y(), option.rect.width(), option.rect.height());

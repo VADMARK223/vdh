@@ -105,7 +105,9 @@ bool TaskTreeItem::getDone() const {
 }
 
 QString TaskTreeItem::getComments() const {
-    return this->data(ColumnsData::getIndexByAlias(COMMENTS_ALIAS)).toString();
+//    return this->data(ColumnsData::getIndexByAlias(COMMENTS_ALIAS)).toString();
+    auto titleData = qvariant_cast<TitleData>(this->data(ColumnsData::getIndexByAlias(TITLE_ALIAS)));
+    return titleData.getComments();
 }
 
 QVector<QVariant> TaskTreeItem::getItemData() {

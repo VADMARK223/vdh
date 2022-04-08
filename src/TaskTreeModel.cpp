@@ -6,7 +6,6 @@
 #include "data/ColumnsData.h"
 #include "data/TitleData.h"
 
-
 TaskTreeModel::TaskTreeModel(QObject *parent) : QAbstractItemModel(parent) {
     QVector<QVariant> data = {};
 
@@ -172,7 +171,8 @@ void TaskTreeModel::setModelData(QFile *file) {
                 QVector<QVariant> newData(QVector<QVariant>(ColumnsData::getColumns().size()));
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(ID_ALIAS))).setValue(id);
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(TITLE_ALIAS))).setValue(
-                        QVariant::fromValue(TitleData(title, xmlReader.attributes().hasAttribute(DONE_ALIAS))));
+                        QVariant::fromValue(TitleData(title,
+                                                      xmlReader.attributes().hasAttribute(DONE_ALIAS))));
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS))).setValue(parentId);
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS))).setValue(0);
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PRIORITY_ALIAS))).setValue(priority);
@@ -198,8 +198,12 @@ void TaskTreeModel::setModelData(QFile *file) {
             if (xmlReader.name() == tr(COMMENTS_ALIAS)) {
                 const QString &commentsValue = xmlReader.readElementText();
                 QVector<QVariant> &last = dataList.last();
-                auto &commentsVariant = const_cast<QVariant &>(last.at(ColumnsData::getIndexByAlias(COMMENTS_ALIAS)));
-                commentsVariant.setValue(commentsValue);
+
+                auto &titleVariant = const_cast<QVariant &>(last.at(ColumnsData::getIndexByAlias(TITLE_ALIAS)));
+                auto titleData = qvariant_cast<TitleData>(titleVariant);
+                const_cast<QVariant &>(last.at(ColumnsData::getIndexByAlias(TITLE_ALIAS))).setValue(
+                        QVariant::fromValue(TitleData(titleData.getTitle(), titleData.getDone(), commentsValue))
+                );
             }
         }
     }
@@ -288,8 +292,8 @@ TaskTreeItem *TaskTreeModel::insertTask([[maybe_unused]] int row, bool isSubTask
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS))).setValue(itemForAttach->getId());
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS))).setValue(0);
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PRIORITY_ALIAS))).setValue(DEFAULT_PRIORITY);
-    const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(COMMENTS_ALIAS))).setValue(
-            "New task #" + QString::number(nextUniqueId));
+//    const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(COMMENTS_ALIAS))).setValue(
+//            "New task #" + QString::number(nextUniqueId));
 
     auto *newTaskItem = new TaskTreeItem(newData, itemForAttach);
 
