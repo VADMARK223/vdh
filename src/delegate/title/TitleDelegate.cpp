@@ -23,14 +23,29 @@ void TitleDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
 
     if (index.data().canConvert<TitleData>()) {
         auto titleData = qvariant_cast<TitleData>(index.data());
+        const int titleShift = 20;
+
+        QString title = titleData.getTitle();
+        QFontMetrics metrics(opt.font);
+        int titleWidth = metrics.horizontalAdvance(title);
         style->drawItemText(painter,
-                            QRect(opt.rect.x() + 20, opt.rect.y(), opt.rect.width() - 20, opt.rect.height()),
+                            QRect(opt.rect.x() + titleShift, opt.rect.y(), opt.rect.width() - titleShift, opt.rect.height()),
                             Qt::AlignVCenter,
                             QApplication::palette(),
                             true,
-                            titleData.getTitle(),
+                            title,
                             option.state & QStyle::State_Selected ? QPalette::HighlightedText
                                                                   : QPalette::Text);
+        const int spacing = 5;
+        const int commentShift = titleShift + titleWidth + spacing;
+        style->drawItemText(painter,
+                            QRect(opt.rect.x() + commentShift, opt.rect.y(), opt.rect.width() - commentShift, opt.rect.height()),
+                            Qt::AlignVCenter,
+                            QApplication::palette(),
+                            true,
+                            "Test comment",
+                            option.state & QStyle::State_Selected ? QPalette::HighlightedText
+                                                                  : QPalette::Mid);
 
         QStyleOptionButton cbOpt;
         cbOpt.rect = QRect(option.rect.x(), option.rect.y(), option.rect.width(), option.rect.height());

@@ -3,7 +3,7 @@
 //
 
 #include "MainWindow.h"
-#include "ColumnsData.h"
+#include "data/ColumnsData.h"
 #include "delegate/DepthDelegate.h"
 #include "delegate/title/TitleDelegate.h"
 #include "delegate/StarDelegate.h"

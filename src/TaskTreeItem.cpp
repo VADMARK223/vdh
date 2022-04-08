@@ -3,7 +3,7 @@
 //
 
 #include "TaskTreeItem.h"
-#include "ColumnsData.h"
+#include "data/ColumnsData.h"
 #include "data/TitleData.h"
 
 TaskTreeItem::TaskTreeItem(const QVector<QVariant> &data, TaskTreeItem *parentItem)
