@@ -17,6 +17,7 @@ QString TitleEditor::getText() {
 
 void TitleEditor::setText(const QString& value) {
     _lineEdit->setText(value);
+    _lineEdit->selectAll();
 }
 
 bool TitleEditor::getChecked() {

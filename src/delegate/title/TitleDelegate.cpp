@@ -74,12 +74,8 @@ void TitleDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
 
 void TitleDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
                                          const QModelIndex &index) const {
-//    qDebug() << "Option rect:" << option.rect;
-//    qDebug() << "Editor geometry" << editor->geometry();
-//    qDebug() << "Editor rect:" << editor->rect();
-
     editor->setGeometry(
-            QRect(option.rect.x() - 10, option.rect.y() - 10, editor->geometry().width(),
+            QRect(option.rect.x() - 10, option.rect.y() - 10, 300,
                   editor->geometry().height() + 10));
 }
 
