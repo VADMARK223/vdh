@@ -13,6 +13,7 @@
 #define PRIORITY_ALIAS "PRIORITY"
 #define PARENT_ID_ALIAS "P"
 #define DEPTH_ALIAS "DEPTH_ALIAS"
+#define DONE_ALIAS "DONE"
 #define COMMENTS_ALIAS "COMMENTS"
 #define STAR_ALIAS "STAR"
 #define TASK_ALIAS "TASK"
@@ -30,7 +31,7 @@ struct COLUMN {
 class ColumnsData {
 public:
     static QVector<COLUMN> getColumns();
-    static int getIndexByAlias(QString alias); // TODO: Need map
+    static int getIndexByAlias(const QString& alias); // TODO: Need map
 private:
     static const QVector<COLUMN> _columns;
 

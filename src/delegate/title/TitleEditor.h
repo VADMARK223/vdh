@@ -12,6 +12,15 @@ class TitleEditor : public QWidget {
 Q_OBJECT
 public:
     explicit TitleEditor(QWidget *parent = nullptr);
+
+    QString getText();
+
+    void setText(const QString &value);
+
+    bool getChecked();
+
+    void setChecked(bool value);
+
 private:
     QCheckBox *_checkBox;
     QLineEdit *_lineEdit;

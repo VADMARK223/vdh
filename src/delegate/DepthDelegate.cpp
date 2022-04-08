@@ -5,6 +5,19 @@
 #include "DepthDelegate.h"
 #include <QApplication>
 
+void DepthDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+    int value = index.data().toInt();
+    QStyleOptionProgressBar styleOptionProgressBar;
+    styleOptionProgressBar.minimum = 0;
+    styleOptionProgressBar.maximum = 10;
+    styleOptionProgressBar.rect = option.rect;
+    styleOptionProgressBar.progress = value;
+    styleOptionProgressBar.text = QString::number(value);
+    styleOptionProgressBar.textVisible = true;
+
+    QApplication::style()->drawControl(QStyle::CE_ProgressBar, &styleOptionProgressBar, painter);
+}
+
 QWidget *
 DepthDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     auto *editor = new QSlider(parent);
@@ -28,17 +41,4 @@ void DepthDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, con
 void DepthDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
                                          const QModelIndex &index) const {
     editor->setGeometry(option.rect);
-}
-
-void DepthDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    int value = index.data().toInt();
-    QStyleOptionProgressBar styleOptionProgressBar;
-    styleOptionProgressBar.minimum = 0;
-    styleOptionProgressBar.maximum = 10;
-    styleOptionProgressBar.rect = option.rect;
-    styleOptionProgressBar.progress = value;
-    styleOptionProgressBar.text = QString::number(value);
-    styleOptionProgressBar.textVisible = true;
-
-    QApplication::style()->drawControl(QStyle::CE_ProgressBar, &styleOptionProgressBar, painter);
 }

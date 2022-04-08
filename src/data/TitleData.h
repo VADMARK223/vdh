@@ -8,16 +8,22 @@
 
 class TitleData {
 public:
-    explicit TitleData(QString title = "Task");
+    explicit TitleData(QString title = "Task", bool done = false);
 
     QString getTitle();
 
     void setTitle(QString value);
 
+    bool getDone();
+
+    void setDone(bool value);
+
     QString toString();
 
 private:
     QString _title;
+
+    bool _done = false;
 };
 
 

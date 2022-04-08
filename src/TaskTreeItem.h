@@ -41,9 +41,12 @@ public:
     [[nodiscard]] int getParentId() const;
 
     [[nodiscard]] int getPriority() const;
+
     [[nodiscard]] int getStar() const;
 
     [[nodiscard]] QString getTitle() const;
+
+    [[nodiscard]] bool getDone() const;
 
     [[nodiscard]] QString getComments() const;
 

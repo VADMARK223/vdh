@@ -10,3 +10,19 @@ TitleEditor::TitleEditor(QWidget *parent) : QWidget(parent), _checkBox(new QChec
     layout->addWidget(_lineEdit);
     setLayout(layout);
 }
+
+QString TitleEditor::getText() {
+    return _lineEdit->text();
+}
+
+void TitleEditor::setText(const QString& value) {
+    _lineEdit->setText(value);
+}
+
+bool TitleEditor::getChecked() {
+    return _checkBox->isChecked();
+}
+
+void TitleEditor::setChecked(bool value) {
+    _checkBox->setChecked(value);
+}

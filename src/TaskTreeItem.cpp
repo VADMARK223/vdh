@@ -99,6 +99,11 @@ QString TaskTreeItem::getTitle() const {
     return titleData.getTitle();
 }
 
+bool TaskTreeItem::getDone() const {
+    auto titleData = qvariant_cast<TitleData>(this->data(ColumnsData::getIndexByAlias(TITLE_ALIAS)));
+    return titleData.getDone();
+}
+
 QString TaskTreeItem::getComments() const {
     return this->data(ColumnsData::getIndexByAlias(COMMENTS_ALIAS)).toString();
 }

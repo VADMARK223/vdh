@@ -23,7 +23,7 @@ QVector<COLUMN> ColumnsData::getColumns() {
     return _columns;
 }
 
-int ColumnsData::getIndexByAlias(QString alias) {
+int ColumnsData::getIndexByAlias(const QString& alias) {
     for (const auto &column: _columns) {
         if (column.alias == alias) {
             return column.index;

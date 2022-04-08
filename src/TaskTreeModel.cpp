@@ -65,7 +65,7 @@ Qt::ItemFlags TaskTreeModel::flags(const QModelIndex &index) const {
 
     if (index.column() == ColumnsData::getIndexByAlias(TITLE_ALIAS) ||
         index.column() == ColumnsData::getIndexByAlias(DEPTH_ALIAS) ||
-            index.column() == ColumnsData::getIndexByAlias(STAR_ALIAS)) {
+        index.column() == ColumnsData::getIndexByAlias(STAR_ALIAS)) {
         return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
     } else {
         return QAbstractItemModel::flags(index);
@@ -171,8 +171,8 @@ void TaskTreeModel::setModelData(QFile *file) {
 
                 QVector<QVariant> newData(QVector<QVariant>(ColumnsData::getColumns().size()));
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(ID_ALIAS))).setValue(id);
-                const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(TITLE_ALIAS))).setValue(QVariant::fromValue(TitleData(title)));
-//                const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(TITLE_ALIAS))).setValue(title);
+                const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(TITLE_ALIAS))).setValue(
+                        QVariant::fromValue(TitleData(title, xmlReader.attributes().hasAttribute(DONE_ALIAS))));
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS))).setValue(parentId);
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS))).setValue(0);
                 const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PRIORITY_ALIAS))).setValue(priority);
@@ -283,7 +283,8 @@ TaskTreeItem *TaskTreeModel::insertTask([[maybe_unused]] int row, bool isSubTask
 
     QVector<QVariant> newData(QVector<QVariant>(ColumnsData::getColumns().size()));
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(ID_ALIAS))).setValue(++nextUniqueId);
-    const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(TITLE_ALIAS))).setValue(QVariant::fromValue(TitleData("Title")));
+    const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(TITLE_ALIAS))).setValue(
+            QVariant::fromValue(TitleData()));
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PARENT_ID_ALIAS))).setValue(itemForAttach->getId());
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(DEPTH_ALIAS))).setValue(0);
     const_cast<QVariant &>(newData.at(ColumnsData::getIndexByAlias(PRIORITY_ALIAS))).setValue(DEFAULT_PRIORITY);

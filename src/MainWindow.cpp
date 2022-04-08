@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     _treeView->setSortingEnabled(false);
     _treeView->setEditTriggers(_treeView->DoubleClicked);
 
-    _treeView->setItemDelegateForColumn(ColumnsData::getIndexByAlias(TITLE_ALIAS), new TitleDelegate());
+    _treeView->setItemDelegateForColumn(ColumnsData::getIndexByAlias(TITLE_ALIAS), new TitleDelegate(this));
 
     auto *depthDelegate = new DepthDelegate();
     _treeView->setItemDelegateForColumn(ColumnsData::getIndexByAlias(DEPTH_ALIAS), depthDelegate);
@@ -272,6 +272,9 @@ void MainWindow::writeElement(QXmlStreamWriter &writer, TaskTreeItem *root) {
         writer.writeAttribute(PARENT_ID_ALIAS, QString::number(child->getParentId()));
         writer.writeAttribute(PRIORITY_ALIAS, QString::number(child->getPriority()));
         writer.writeAttribute(STAR_ALIAS, QString::number(child->getStar()));
+        if (child->getDone()) {
+            writer.writeAttribute(DONE_ALIAS, QString::number(child->getDone()));
+        }
         if (!child->getComments().isEmpty()) {
             writer.writeTextElement(COMMENTS_ALIAS, child->getComments());
         }

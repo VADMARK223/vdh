@@ -7,11 +7,15 @@
 
 
 #include <QStyledItemDelegate>
+#include <QtWidgets>
+
+const int CHECK_ROLE = Qt::UserRole + 1;
 
 class TitleDelegate : public QStyledItemDelegate {
 Q_OBJECT
+
 public:
-    using QStyledItemDelegate::QStyledItemDelegate;
+    explicit TitleDelegate(QObject *parent);
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
@@ -26,6 +30,12 @@ public:
     updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+
+    bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index) override;
+
+//    QCheckBox *_checkBox;
+//    QLabel *mRight;
+//    QFrame *mFrame;
 };
 
 

@@ -6,7 +6,7 @@
 #include <utility>
 #include "TitleData.h"
 
-TitleData::TitleData(QString title) : _title(std::move(title)) {
+TitleData::TitleData(QString title, bool done) : _title(std::move(title)), _done(done) {
 
 }
 
@@ -16,7 +16,8 @@ QString TitleData::getTitle() {
 
 QString TitleData::toString() {
     return "TitleData(" +
-           this->getTitle() +
+           this->getTitle() + "," +
+           QString::number(this->getDone()) +
            ")";
 }
 
@@ -24,3 +25,10 @@ void TitleData::setTitle(QString value) {
     _title = std::move(value);
 }
 
+bool TitleData::getDone() {
+    return _done;
+}
+
+void TitleData::setDone(bool value) {
+    _done = value;
+}
