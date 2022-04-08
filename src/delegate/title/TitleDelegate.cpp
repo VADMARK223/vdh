@@ -24,7 +24,7 @@ void TitleDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     if (index.data().canConvert<TitleData>()) {
         auto titleData = qvariant_cast<TitleData>(index.data());
         style->drawItemText(painter,
-                            QRect(opt.rect.x() + 20, opt.rect.y(), opt.rect.width(), opt.rect.height()),
+                            QRect(opt.rect.x() + 20, opt.rect.y(), opt.rect.width() - 20, opt.rect.height()),
                             Qt::AlignVCenter,
                             QApplication::palette(),
                             true,
