@@ -13,7 +13,6 @@ find_package(Qt5 COMPONENTS
         Gui
         Widgets
         Quick
-        Qml
         QuickControls2
         REQUIRED)
 
@@ -42,7 +41,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt5::Gui
         Qt5::Widgets
         Qt5::Quick
-        Qt5::Qml
         Qt5::QuickControls2
         )
 
