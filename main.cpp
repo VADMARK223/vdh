@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     QGuiApplication::setWindowIcon(QIcon(":images/ava.png"));
 
     QQmlApplicationEngine engine;
-    const QUrl url("qrc:qml/main.qml");
+    const QUrl url("qrc:/qml/main.qml");
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
                 if (!obj && url == objUrl)

@@ -1,26 +1,29 @@
-import QtQuick 2.12
+import QtQuick 2.12 as QQ2
+import QtQuick.Window 2.12
+import QtQuick.Controls 2.12
 
-Item {
+QQ2.Item {
     id: root
-    property color color: 'lightgrey'
+    property int size: 200
+    property color color: "green"
     property alias text: caption.text
-    
-    signal clicked()
     
     width: size
     height: size
+
+    signal clicked()
     
-    Rectangle {
+    QQ2.Rectangle {
         anchors.fill: parent
         radius: size/2
         color: mouseArea.containsPress ? Qt.darker(root.color, 1.2) : root.color
         
-        Text {
+        QQ2.Text {
             id: caption
             anchors.centerIn: parent
-            text: qsTr('Click')
+            text: qsTr("Default text")
         }
-        MouseArea {
+        QQ2.MouseArea {
             id: mouseArea
             anchors.fill: parent
             onClicked: {
