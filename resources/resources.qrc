@@ -11,5 +11,6 @@
         <file>images/delete.png</file>
         <file>qml/RoundButton.qml</file>
         <file>qml/TestItem.qml</file>
+        <file>qml/Block.qml</file>
     </qresource>
 </RCC>
