@@ -5,8 +5,11 @@
 #include <QIcon>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
+#include <QDebug>
 
 int main(int argc, char *argv[]) {
+    qDebug() << "Start";
+
     QQuickStyle::setStyle("Fusion");
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.5)
 project(vdh LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON) # The meta object compiler is one of the core functionality of Qt, it reads a C++ header file and if it finds a Q_OBJECT macro, it will produces a C++ source file containing meta object code for the class.

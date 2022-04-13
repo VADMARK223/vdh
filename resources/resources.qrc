@@ -1,6 +1,5 @@
-<!DOCTYPE RCC>
-<RCC version="1.0">
-    <qresource>
+<RCC>
+    <qresource prefix="/">
         <file>qml/main.qml</file>
         <file>images/open.png</file>
         <file>images/add-sub.png</file>
@@ -10,5 +9,6 @@
         <file>images/add.png</file>
         <file>images/new.png</file>
         <file>images/delete.png</file>
+        <file>qml/RoundButton.qml</file>
     </qresource>
 </RCC>

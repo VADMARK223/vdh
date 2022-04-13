@@ -9,13 +9,25 @@ Window {
     height: 480
     title: qsTr("vdh")
 
+    function updateColor() {
+        win.color = Qt.rgba(Math.random(),Math.random(),Math.random());
+    }
+
     Button {
         id: button1
         text: "Click"
         anchors.centerIn: parent
 
         onClicked: {
-           win.color = Qt.rgba(Math.random(),Math.random(),Math.random())
+           updateColor();
+        }
+    }
+
+    RoundButton {
+        id: root
+        text: "Click 2"
+        onClicked: {
+           updateColor();
         }
     }
 }
