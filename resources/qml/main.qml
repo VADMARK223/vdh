@@ -11,7 +11,7 @@ Window {
 
     Button {
         id: button1
-        text: "Click me"
+        text: "Click"
         anchors.centerIn: parent
 
         onClicked: {
