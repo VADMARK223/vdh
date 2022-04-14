@@ -12,5 +12,7 @@
         <file>qml/RoundButton.qml</file>
         <file>qml/TestItem.qml</file>
         <file>qml/Block.qml</file>
+        <file>qml/MessageItem.qml</file>
+        <file>qml/MessageEditor.qml</file>
     </qresource>
 </RCC>

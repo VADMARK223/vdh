@@ -9,14 +9,93 @@ Window {
     width: 640
     height: 640
     title: qsTr('vdh')
-    minimumWidth: columnLayout.implicitWidth + 2 * 10
+    readonly property int defMargin: 10
+    readonly property color panelColor: '#17212B'
+    readonly property color bubbleColor: '#2b5278'
+    readonly property color bgColor: '#0E1621'
+    readonly property color textColor: 'white'
+//    minimumWidth: columnLayout.implicitWidth + 2 * defMargin
+
+    MessageEditor {
+        id: editor
+    }
+
+    Page {
+        id: page
+        anchors.fill: parent
+
+        footer: MessageEditor {
+            onNewMessage: {
+                var newMsg = {};
+                newMsg.text = msg;
+                newMsg.time = Qt.formatDateTime(new Date(), 'hh:mm');
+                listModel.append(newMsg);
+            }
+        }
+
+        background: Rectangle {
+            color: bgColor
+        }
+
+        ListView {
+            id: listView
+            anchors.fill: parent
+            spacing: defMargin
+            ScrollBar.vertical: ScrollBar {}
+
+            /*model: [
+                'first',
+                'second',
+                'third',
+                'fourth'
+            ]*/
+
+            model: listModel
+
+            delegate: MessageItem {
+                height: 60
+//                width: parent.width
+//                width: ListView.view.width
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 2*defMargin
+//                backgroundColor: 'green'
+                text: model.text
+                time: model.time
+
+            }
+        }
+
+        ListModel {
+            id: listModel
+            ListElement {
+                text: 'first'
+                time: '10:34'
+            }
+            ListElement {
+                text: 'second'
+                time: '10:35'
+            }
+            ListElement {
+                text: 'third'
+                time: '10:36'
+            }
+            ListElement {
+                text: 'fourth'
+                time: '10:37'
+            }
+
+        }
+    }
+
 
 
     ColumnLayout {
         id: columnLayout
-        spacing: 10
+        visible: false
+        spacing: defMargin
         anchors.fill: parent
-        anchors.margins: 10
+        anchors.margins: defMargin
 
 
         Block {
@@ -46,6 +125,7 @@ Window {
     }
 
     Rectangle {
+        visible: false
         anchors.fill: columnLayout
         border.width: 4
         border.color: 'black'
